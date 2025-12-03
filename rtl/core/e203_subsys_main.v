@@ -335,8 +335,7 @@ module e203_subsys_main(
   output  io_pads_qspi_cs_0_o_pue,
   output  io_pads_qspi_cs_0_o_ds,
 
-  // terminal UART + video
-  input   term_uart_rx,
+  // terminal video
   output  lcd_dclk,
   output  lcd_hs,
   output  lcd_vs,
@@ -1579,7 +1578,6 @@ e203_subsys_clint u_e203_subsys_clint(
     .io_pads_qspi_cs_0_o_pue    (io_pads_qspi_cs_0_o_pue    ),
     .io_pads_qspi_cs_0_o_ds     (io_pads_qspi_cs_0_o_ds     ),
 
-    .term_uart_rx          (term_uart_rx),
     .lcd_dclk              (lcd_dclk),
     .lcd_hs                (lcd_hs),
     .lcd_vs                (lcd_vs),

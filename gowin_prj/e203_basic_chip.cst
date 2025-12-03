@@ -28,10 +28,6 @@ IO_PORT "tms"           PULL_MODE=UP;
 IO_PORT "tck"           PULL_MODE=UP;
 IO_PORT "tdi"           PULL_MODE=UP;
 
-// Terminal UART RX (from PC/MCU TX)
-IO_LOC  "term_uart_rx"   T13;
-IO_PORT "term_uart_rx"   IO_TYPE=LVCMOS33 PULL_MODE=UP;
-
 // LCD/HDMI timing and RGB (from fpga_my mapping)
 IO_LOC "lcd_dclk" R9;
 IO_LOC "lcd_hs"   A15;
@@ -39,7 +35,7 @@ IO_LOC "lcd_vs"   D14;
 IO_LOC "lcd_de"   E15;
 IO_LOC "lcd_r[0]" L9;
 IO_LOC "lcd_r[1]" N8;
-IO_LOC "lcd_r[2]" N9;
+IO_LOC "lcd_r[2]" M9;
 IO_LOC "lcd_r[3]" N7;
 IO_LOC "lcd_r[4]" N6;
 IO_LOC "lcd_g[0]" D11;
@@ -78,5 +74,3 @@ IO_PORT "lcd_b[4]" IO_TYPE=LVCMOS33;
 // 背光信号若需外出，请在此指定管脚；如未用可临时占用空脚
 IO_LOC  "lcd_bl"   A5;
 IO_PORT "lcd_bl"   IO_TYPE=LVCMOS33;
-
-

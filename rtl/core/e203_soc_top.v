@@ -299,8 +299,7 @@ module e203_soc_top(
   output  io_pads_qspi_dq_3_o_pue,
   output  io_pads_qspi_dq_3_o_ds,
 
-  // terminal UART + video
-  input   term_uart_rx,
+  // terminal video
   output  lcd_dclk,
   output  lcd_hs,
   output  lcd_vs,
@@ -713,7 +712,6 @@ module e203_soc_top(
   .io_pads_qspi_cs_0_o_ie     (),
   .io_pads_qspi_cs_0_o_pue    (),
   .io_pads_qspi_cs_0_o_ds     (),
-  .term_uart_rx               (term_uart_rx),
   .lcd_dclk                   (lcd_dclk),
   .lcd_hs                     (lcd_hs),
   .lcd_vs                     (lcd_vs),

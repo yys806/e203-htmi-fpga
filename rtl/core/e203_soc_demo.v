@@ -16,8 +16,7 @@ module e203_soc_demo (
     output         qspi_sck,  //QSPI SCK and CS is output without enable
     output         qspi_cs,   //QSPI SCK and CS is output without enable
 
-    // terminal UART + video
-    input          term_uart_rx,
+    // terminal video
     output         lcd_dclk,
     output         lcd_hs,
     output         lcd_vs,
@@ -340,7 +339,6 @@ e203_soc_top e203_soc_ins (
     .io_pads_qspi_dq_3_o_pue    (),
     .io_pads_qspi_dq_3_o_ds     (),
 
-    .term_uart_rx               (term_uart_rx),
     .lcd_dclk                   (lcd_dclk),
     .lcd_hs                     (lcd_hs),
     .lcd_vs                     (lcd_vs),

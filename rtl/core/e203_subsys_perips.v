@@ -318,8 +318,7 @@ module e203_subsys_perips(
   output  io_pads_qspi_cs_0_o_pue,
   output  io_pads_qspi_cs_0_o_ds,
 
-  // terminal UART and video
-  input   term_uart_rx,
+  // terminal video
   output  lcd_dclk,
   output  lcd_hs,
   output  lcd_vs,
@@ -2595,7 +2594,7 @@ fpga_terminal_icb u_my_periph_top(
 
     .io_interrupts_0_0 (my_irq),
 
-    .term_uart_rx    (term_uart_rx),
+    .term_uart_rx    (io_pads_gpio_16_i_ival),
     .lcd_dclk        (lcd_dclk),
     .lcd_hs          (lcd_hs),
     .lcd_vs          (lcd_vs),
