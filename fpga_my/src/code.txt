@@ -1,0 +1,566 @@
+module font_rom(
+    input  wire [7:0] ascii,
+    input  wire [3:0] row,
+    output reg  [7:0] data
+);
+    always @(*) begin
+        case(ascii)
+            // --- 控制字符 ---
+            8'h00: data = 8'h00; // NULL (全黑)
+            8'h20: data = 8'h00; // 空格
+
+            // --- 标点符号 & 数字 ---
+            8'h21: case(row) 1:data=16; 2:data=16; 3:data=16; 4:data=16; 5:data=16; 6:data=16; 8:data=16; default:data=0; endcase // !
+            8'h22: case(row) 1:data=36; 2:data=36; 3:data=36; default:data=0; endcase // "
+            8'h23: case(row) 2:data=36; 3:data=36; 4:data=126; 5:data=36; 6:data=126; 7:data=36; 8:data=36; default:data=0; endcase // #
+            8'h24: case(row) 1:data=8; 2:data=62; 3:data=64; 4:data=62; 5:data=2; 6:data=62; 7:data=8; default:data=0; endcase // $
+            8'h25: case(row) 1:data=98; 2:data=100; 3:data=8; 4:data=16; 5:data=38; 6:data=70; default:data=0; endcase // %
+            8'h26: case(row) 2:data=56; 3:data=68; 4:data=20; 5:data=84; 6:data=88; 7:data=36; default:data=0; endcase // &
+            8'h27: case(row) 1:data=24; 2:data=24; 3:data=8; default:data=0; endcase // '
+            8'h28: case(row) 1:data=4; 2:data=8; 3:data=16; 4:data=16; 5:data=16; 6:data=16; 7:data=16; 8:data=16; 9:data=8; 10:data=4; default:data=0; endcase // (
+            8'h29: case(row) 1:data=32; 2:data=16; 3:data=8; 4:data=8; 5:data=8; 6:data=8; 7:data=8; 8:data=8; 9:data=16; 10:data=32; default:data=0; endcase // )
+            8'h2A: case(row) 3:data=16; 4:data=84; 5:data=56; 6:data=84; 7:data=16; default:data=0; endcase // *
+            8'h2B: case(row) 3:data=16; 4:data=16; 5:data=124; 6:data=16; 7:data=16; default:data=0; endcase // +
+            8'h2C: case(row) 9:data=24; 10:data=24; 11:data=8; 12:data=16; default:data=0; endcase // ,
+            8'h2D: case(row) 6:data=126; default:data=0; endcase // -
+            8'h2E: case(row) 9:data=24; 10:data=24; default:data=0; endcase // .
+            8'h2F: case(row) 2:data=2; 3:data=2; 4:data=4; 5:data=8; 6:data=16; 7:data=32; 8:data=64; 9:data=64; default:data=0; endcase // /
+            
+            8'h30: case(row) 1:data=60; 2:data=66; 3:data=66; 4:data=66; 5:data=66; 6:data=66; 7:data=66; 8:data=66; 9:data=60; default:data=0; endcase // 0
+            8'h31: case(row) 1:data=8; 2:data=24; 3:data=8; 4:data=8; 5:data=8; 6:data=8; 7:data=8; 8:data=8; 9:data=28; default:data=0; endcase // 1
+            8'h32: case(row) 1:data=60; 2:data=66; 3:data=2; 4:data=2; 5:data=60; 6:data=64; 7:data=64; 8:data=66; 9:data=126; default:data=0; endcase // 2
+            8'h33: case(row) 1:data=60; 2:data=66; 3:data=2; 4:data=28; 5:data=2; 6:data=2; 7:data=66; 8:data=66; 9:data=60; default:data=0; endcase // 3
+            8'h34: case(row) 1:data=4; 2:data=12; 3:data=20; 4:data=36; 5:data=68; 6:data=126; 7:data=4; 8:data=4; 9:data=4; default:data=0; endcase // 4
+            8'h35: case(row) 1:data=126; 2:data=64; 3:data=64; 4:data=124; 5:data=2; 6:data=2; 7:data=2; 8:data=66; 9:data=60; default:data=0; endcase // 5
+            8'h36: case(row) 1:data=60; 2:data=66; 3:data=64; 4:data=124; 5:data=66; 6:data=66; 7:data=66; 8:data=66; 9:data=60; default:data=0; endcase // 6
+            8'h37: case(row) 1:data=126; 2:data=2; 3:data=4; 4:data=8; 5:data=8; 6:data=16; 7:data=16; 8:data=32; 9:data=32; default:data=0; endcase // 7
+            8'h38: case(row) 1:data=60; 2:data=66; 3:data=66; 4:data=60; 5:data=66; 6:data=66; 7:data=66; 8:data=66; 9:data=60; default:data=0; endcase // 8
+            8'h39: case(row) 1:data=60; 2:data=66; 3:data=66; 4:data=66; 5:data=62; 6:data=2; 7:data=66; 8:data=66; 9:data=60; default:data=0; endcase // 9
+            
+            8'h3A: case(row) 4:data=24; 5:data=24; 8:data=24; 9:data=24; default:data=0; endcase // :
+            8'h3B: case(row) 4:data=24; 5:data=24; 8:data=24; 9:data=24; 10:data=8; 11:data=16; default:data=0; endcase // ;
+            8'h3C: case(row) 3:data=6; 4:data=24; 5:data=96; 6:data=24; 7:data=6; default:data=0; endcase // <
+            8'h3D: case(row) 4:data=126; 6:data=126; default:data=0; endcase // =
+            8'h3E: case(row) 3:data=96; 4:data=24; 5:data=6; 6:data=24; 7:data=96; default:data=0; endcase // >
+            8'h3F: case(row) 1:data=60; 2:data=66; 3:data=4; 4:data=8; 5:data=16; 6:data=16; 8:data=16; default:data=0; endcase // ?
+            8'h40: case(row) 2:data=60; 3:data=66; 4:data=74; 5:data=86; 6:data=94; 7:data=64; 8:data=66; 9:data=60; default:data=0; endcase // @
+
+            // --- 大写字母 A-Z ---
+            8'h41: case(row) 1:data=24; 2:data=36; 3:data=66; 4:data=66; 5:data=126; 6:data=66; 7:data=66; 8:data=66; 9:data=66; default:data=0; endcase
+            8'h42: case(row) 1:data=124; 2:data=66; 3:data=66; 4:data=66; 5:data=124; 6:data=66; 7:data=66; 8:data=66; 9:data=124; default:data=0; endcase
+            8'h43: case(row) 1:data=60; 2:data=66; 3:data=64; 4:data=64; 5:data=64; 6:data=64; 7:data=64; 8:data=66; 9:data=60; default:data=0; endcase
+            8'h44: case(row) 1:data=120; 2:data=68; 3:data=66; 4:data=66; 5:data=66; 6:data=66; 7:data=66; 8:data=68; 9:data=120; default:data=0; endcase
+            8'h45: case(row) 1:data=126; 2:data=64; 3:data=64; 4:data=64; 5:data=120; 6:data=64; 7:data=64; 8:data=64; 9:data=126; default:data=0; endcase
+            8'h46: case(row) 1:data=126; 2:data=64; 3:data=64; 4:data=64; 5:data=120; 6:data=64; 7:data=64; 8:data=64; 9:data=64; default:data=0; endcase
+            8'h47: case(row) 1:data=60; 2:data=66; 3:data=64; 4:data=64; 5:data=64; 6:data=78; 7:data=66; 8:data=66; 9:data=62; default:data=0; endcase
+            8'h48: case(row) 1:data=66; 2:data=66; 3:data=66; 4:data=66; 5:data=126; 6:data=66; 7:data=66; 8:data=66; 9:data=66; default:data=0; endcase
+            8'h49: case(row) 1:data=60; 2:data=24; 3:data=24; 4:data=24; 5:data=24; 6:data=24; 7:data=24; 8:data=24; 9:data=60; default:data=0; endcase
+            8'h4A: case(row) 1:data=6; 2:data=6; 3:data=6; 4:data=6; 5:data=6; 6:data=6; 7:data=66; 8:data=66; 9:data=60; default:data=0; endcase
+            8'h4B: case(row) 1:data=66; 2:data=70; 3:data=74; 4:data=82; 5:data=98; 6:data=82; 7:data=74; 8:data=70; 9:data=66; default:data=0; endcase
+            8'h4C: case(row) 1:data=64; 2:data=64; 3:data=64; 4:data=64; 5:data=64; 6:data=64; 7:data=64; 8:data=64; 9:data=126; default:data=0; endcase
+            8'h4D: case(row) 1:data=66; 2:data=102; 3:data=90; 4:data=90; 5:data=82; 6:data=82; 7:data=82; 8:data=82; 9:data=82; default:data=0; endcase
+            8'h4E: case(row) 1:data=66; 2:data=70; 3:data=74; 4:data=82; 5:data=82; 6:data=74; 7:data=74; 8:data=70; 9:data=66; default:data=0; endcase
+            8'h4F: case(row) 1:data=60; 2:data=66; 3:data=66; 4:data=66; 5:data=66; 6:data=66; 7:data=66; 8:data=66; 9:data=60; default:data=0; endcase
+            8'h50: case(row) 1:data=124; 2:data=66; 3:data=66; 4:data=66; 5:data=124; 6:data=64; 7:data=64; 8:data=64; 9:data=64; default:data=0; endcase
+            8'h51: case(row) 1:data=60; 2:data=66; 3:data=66; 4:data=66; 5:data=66; 6:data=66; 7:data=74; 8:data=68; 9:data=62; default:data=0; endcase
+            8'h52: case(row) 1:data=124; 2:data=66; 3:data=66; 4:data=66; 5:data=124; 6:data=72; 7:data=68; 8:data=66; 9:data=66; default:data=0; endcase
+            8'h53: case(row) 1:data=60; 2:data=66; 3:data=64; 4:data=60; 5:data=2; 6:data=2; 7:data=66; 8:data=66; 9:data=60; default:data=0; endcase
+            8'h54: case(row) 1:data=126; 2:data=24; 3:data=24; 4:data=24; 5:data=24; 6:data=24; 7:data=24; 8:data=24; 9:data=24; default:data=0; endcase
+            8'h55: case(row) 1:data=66; 2:data=66; 3:data=66; 4:data=66; 5:data=66; 6:data=66; 7:data=66; 8:data=66; 9:data=60; default:data=0; endcase
+            8'h56: case(row) 1:data=66; 2:data=66; 3:data=66; 4:data=66; 5:data=66; 6:data=66; 7:data=36; 8:data=36; 9:data=24; default:data=0; endcase
+            8'h57: case(row) 1:data=66; 2:data=66; 3:data=66; 4:data=66; 5:data=82; 6:data=82; 7:data=90; 8:data=90; 9:data=66; default:data=0; endcase
+            8'h58: case(row) 1:data=66; 2:data=66; 3:data=36; 4:data=24; 5:data=24; 6:data=36; 7:data=66; 8:data=66; 9:data=66; default:data=0; endcase
+            8'h59: case(row) 1:data=66; 2:data=66; 3:data=36; 4:data=24; 5:data=24; 6:data=24; 7:data=24; 8:data=24; 9:data=24; default:data=0; endcase
+            8'h5A: case(row) 1:data=126; 2:data=2; 3:data=4; 4:data=8; 5:data=16; 6:data=32; 7:data=64; 8:data=64; 9:data=126; default:data=0; endcase
+
+            8'h5B: case(row) 1:data=60; 2:data=32; 3:data=32; 4:data=32; 5:data=32; 6:data=32; 7:data=32; 8:data=32; 9:data=60; default:data=0; endcase // [
+            8'h5C: case(row) 2:data=64; 3:data=64; 4:data=32; 5:data=16; 6:data=8; 7:data=4; 8:data=2; 9:data=2; default:data=0; endcase // \
+            8'h5D: case(row) 1:data=60; 2:data=4; 3:data=4; 4:data=4; 5:data=4; 6:data=4; 7:data=4; 8:data=4; 9:data=60; default:data=0; endcase // ]
+            8'h5E: case(row) 2:data=24; 3:data=60; 4:data=102; default:data=0; endcase // ^
+            8'h5F: case(row) 12:data=126; default:data=0; endcase // _
+            
+            // --- 小写字母 a-z ---
+            8'h61: case(row) 4:data=60; 5:data=2; 6:data=62; 7:data=66; 8:data=66; 9:data=66; 10:data=62; default:data=0; endcase
+            8'h62: case(row) 1:data=64; 2:data=64; 3:data=64; 4:data=92; 5:data=98; 6:data=66; 7:data=66; 8:data=66; 9:data=98; 10:data=92; default:data=0; endcase
+            8'h63: case(row) 4:data=60; 5:data=66; 6:data=64; 7:data=64; 8:data=64; 9:data=66; 10:data=60; default:data=0; endcase
+            8'h64: case(row) 1:data=2; 2:data=2; 3:data=2; 4:data=58; 5:data=70; 6:data=66; 7:data=66; 8:data=66; 9:data=70; 10:data=58; default:data=0; endcase
+            8'h65: case(row) 4:data=60; 5:data=66; 6:data=66; 7:data=126; 8:data=64; 9:data=64; 10:data=60; default:data=0; endcase
+            8'h66: case(row) 1:data=12; 2:data=18; 3:data=16; 4:data=60; 5:data=16; 6:data=16; 7:data=16; 8:data=16; 9:data=16; 10:data=16; default:data=0; endcase
+            8'h67: case(row) 4:data=58; 5:data=70; 6:data=66; 7:data=66; 8:data=70; 9:data=58; 10:data=2; 11:data=60; default:data=0; endcase
+            8'h68: case(row) 1:data=64; 2:data=64; 3:data=64; 4:data=92; 5:data=98; 6:data=66; 7:data=66; 8:data=66; 9:data=66; 10:data=66; default:data=0; endcase
+            8'h69: case(row) 1:data=16; 3:data=48; 4:data=16; 5:data=16; 6:data=16; 7:data=16; 8:data=16; 9:data=16; 10:data=60; default:data=0; endcase
+            8'h6A: case(row) 1:data=4; 3:data=12; 4:data=4; 5:data=4; 6:data=4; 7:data=4; 8:data=4; 9:data=4; 10:data=68; 11:data=56; default:data=0; endcase
+            8'h6B: case(row) 1:data=64; 2:data=64; 3:data=64; 4:data=68; 5:data=72; 6:data=80; 7:data=96; 8:data=80; 9:data=72; 10:data=68; default:data=0; endcase
+            8'h6C: case(row) 1:data=48; 2:data=16; 3:data=16; 4:data=16; 5:data=16; 6:data=16; 7:data=16; 8:data=16; 9:data=16; 10:data=60; default:data=0; endcase
+            8'h6D: case(row) 4:data=106; 5:data=146; 6:data=146; 7:data=146; 8:data=146; 9:data=146; 10:data=146; default:data=0; endcase
+            8'h6E: case(row) 4:data=92; 5:data=98; 6:data=66; 7:data=66; 8:data=66; 9:data=66; 10:data=66; default:data=0; endcase
+            8'h6F: case(row) 4:data=60; 5:data=66; 6:data=66; 7:data=66; 8:data=66; 9:data=66; 10:data=60; default:data=0; endcase
+            8'h70: case(row) 4:data=92; 5:data=98; 6:data=66; 7:data=66; 8:data=66; 9:data=98; 10:data=92; 11:data=64; default:data=0; endcase
+            8'h71: case(row) 4:data=58; 5:data=70; 6:data=66; 7:data=66; 8:data=66; 9:data=70; 10:data=58; 11:data=2; default:data=0; endcase
+            8'h72: case(row) 4:data=94; 5:data=96; 6:data=64; 7:data=64; 8:data=64; 9:data=64; 10:data=64; default:data=0; endcase
+            8'h73: case(row) 4:data=60; 5:data=66; 6:data=64; 7:data=60; 8:data=2; 9:data=66; 10:data=60; default:data=0; endcase
+            8'h74: case(row) 2:data=16; 3:data=16; 4:data=62; 5:data=16; 6:data=16; 7:data=16; 8:data=16; 9:data=18; 10:data=12; default:data=0; endcase
+            8'h75: case(row) 4:data=66; 5:data=66; 6:data=66; 7:data=66; 8:data=66; 9:data=66; 10:data=58; default:data=0; endcase
+            8'h76: case(row) 4:data=66; 5:data=66; 6:data=66; 7:data=36; 8:data=36; 9:data=24; 10:data=24; default:data=0; endcase
+            8'h77: case(row) 4:data=66; 5:data=66; 6:data=66; 7:data=73; 8:data=73; 9:data=73; 10:data=54; default:data=0; endcase
+            8'h78: case(row) 4:data=66; 5:data=36; 6:data=24; 7:data=24; 8:data=36; 9:data=66; 10:data=66; default:data=0; endcase
+            8'h79: case(row) 4:data=66; 5:data=66; 6:data=66; 7:data=66; 8:data=60; 9:data=4; 10:data=60; default:data=0; endcase
+            8'h7A: case(row) 4:data=126; 5:data=4; 6:data=8; 7:data=16; 8:data=32; 9:data=64; 10:data=126; default:data=0; endcase
+            
+            8'h7B: case(row) 1:data=12; 2:data=16; 3:data=16; 4:data=16; 5:data=48; 6:data=16; 7:data=16; 8:data=16; 9:data=12; default:data=0; endcase // {
+            8'h7C: case(row) 1:data=16; 2:data=16; 3:data=16; 4:data=16; 5:data=16; 6:data=16; 7:data=16; 8:data=16; 9:data=16; 10:data=16; default:data=0; endcase // |
+            8'h7D: case(row) 1:data=48; 2:data=8; 3:data=8; 4:data=8; 5:data=12; 6:data=8; 7:data=8; 8:data=8; 9:data=48; default:data=0; endcase // }
+            8'h7E: case(row) 5:data=76; 6:data=50; default:data=0; endcase // ~
+
+            default: data = (row==0 || row==15) ? 8'hFF : 8'h81; // 未定义字符显示方框
+        endcase
+    end
+endmodule
+
+module lcd_driver(
+    input  wire clk,        // 像素时钟 (27MHz)
+    input  wire rst_n,      // 复位信号 (低电平有效)
+    
+    output wire lcd_de,     // 数据有效信号 (High Active)
+    output wire lcd_hs,     // 行同步信号 (Low Active)
+    output wire lcd_vs,     // 场同步信号 (Low Active)
+    output wire [10:0] pixel_x, // 当前像素 X 坐标
+    output wire [9:0]  pixel_y  // 当前像素 Y 坐标
+);
+
+    // ============================================
+    // 时序参数定义 (适配 27MHz 时钟)
+    // 计算公式: 刷新率 = DCLK / (H_Total * V_Total)
+    // 目标: 27,000,000 / (880 * 512) = 59.92 Hz (完美!)
+    // ============================================
+    
+    // 水平方向 (Horizontal)
+    parameter H_Vis   = 800; // 可视区域
+    parameter H_Front = 40;  // 前沿
+    parameter H_Sync  = 4;   // 同步脉冲
+    parameter H_Back  = 36;  // 后沿
+    parameter H_Total = 880; // 总周期
+
+    // 垂直方向 (Vertical)
+    parameter V_Vis   = 480; // 可视区域
+    parameter V_Front = 12;  // 前沿
+    parameter V_Sync  = 4;   // 同步脉冲
+    parameter V_Back  = 16;  // 后沿
+    parameter V_Total = 512; // 总周期
+
+    // 计数器
+    reg [10:0] cnt_h;
+    reg [9:0]  cnt_v;
+
+    // 行计数器逻辑
+    always @(posedge clk or negedge rst_n) begin
+        if(!rst_n) 
+            cnt_h <= 11'd0;
+        else begin
+            if(cnt_h == H_Total - 1) 
+                cnt_h <= 11'd0;
+            else 
+                cnt_h <= cnt_h + 1'b1;
+        end
+    end
+
+    // 场计数器逻辑
+    always @(posedge clk or negedge rst_n) begin
+        if(!rst_n) 
+            cnt_v <= 10'd0;
+        else begin
+            if(cnt_h == H_Total - 1) begin
+                if(cnt_v == V_Total - 1) 
+                    cnt_v <= 10'd0;
+                else 
+                    cnt_v <= cnt_v + 1'b1;
+            end
+        end
+    end
+
+    // 信号生成
+    // HSYNC 和 VSYNC 为负极性 (低电平有效)，所以在计数值小于 Sync 脉冲宽度时拉低
+    assign lcd_hs = ~(cnt_h < H_Sync);
+    assign lcd_vs = ~(cnt_v < V_Sync);
+    
+    // DE (Data Enable) 数据有效区
+    // 只有在扫描到可视区域时，DE 才为高电平
+    assign lcd_de = (cnt_h >= (H_Sync + H_Back)) && 
+                    (cnt_h < (H_Sync + H_Back + H_Vis)) &&
+                    (cnt_v >= (V_Sync + V_Back)) && 
+                    (cnt_v < (V_Sync + V_Back + V_Vis));
+
+    // 坐标输出 (将时序坐标转换为像素坐标 0~799, 0~479)
+    // 只有在 DE 有效时输出有效坐标，否则输出 0
+    assign pixel_x = lcd_de ? (cnt_h - (H_Sync + H_Back)) : 11'd0;
+    assign pixel_y = lcd_de ? (cnt_v - (V_Sync + V_Back)) : 10'd0;
+
+endmodule
+
+module text_display(
+    input  wire clk,
+    input  wire [10:0] pixel_x,
+    input  wire [9:0]  pixel_y,
+    
+    // 新增接口：光标信息
+    input  wire [6:0]  cursor_x,      // 当前光标在第几列
+    input  wire [4:0]  cursor_y,      // 当前光标在第几行
+    input  wire        cursor_blink,  // 光标闪烁信号 (1=显示方块, 0=不显示)
+    
+    // 连接 VRAM
+    output wire [11:0] vram_addr,
+    input  wire [7:0]  ascii_code,
+    
+    // 输出像素
+    output wire pixel_on
+);
+
+    // 1. 计算当前是第几个字 (列, 行)
+    wire [6:0] col_idx = pixel_x[9:3]; // pixel_x / 8
+    wire [4:0] row_idx = pixel_y[8:4]; // pixel_y / 16
+    
+    // 2. 算出 VRAM 地址
+    assign vram_addr = (row_idx * 100) + col_idx;
+    
+    // 3. 字符内部位置
+    wire [2:0] sub_x = pixel_x[2:0];
+    wire [3:0] sub_y = pixel_y[3:0];
+    
+    // 4. 查字库
+    wire [7:0] font_bits;
+    font_rom u_font_rom(
+        .ascii (ascii_code),
+        .row   (sub_y),
+        .data  (font_bits)
+    );
+    
+    wire char_pixel = font_bits[7 - sub_x];
+
+    // 5. 光标逻辑 【关键新增】
+    // 如果当前扫描位置 == 光标位置
+    wire is_cursor_pos = (col_idx == cursor_x) && (row_idx == cursor_y);
+    
+    // 最终输出逻辑：
+    // 如果是光标位置且闪烁状态为亮 -> 显示光标方块 (或者反色)
+    // 否则 -> 显示字符本身
+    
+    // 这里实现“异或”效果：光标亮的时候，黑底变白，白字变黑（反色），这样能看清光标下的字
+    assign pixel_on = (is_cursor_pos && cursor_blink) ? ~char_pixel : char_pixel;
+
+endmodule
+
+module top(
+    input  wire clk,          // 27MHz
+    input  wire uart_rx_pin,  // T13
+    
+    output wire lcd_dclk,
+    output wire lcd_hs, lcd_vs, lcd_de, lcd_bl,
+    output wire [4:0] lcd_r,
+    output wire [5:0] lcd_g,
+    output wire [4:0] lcd_b
+);
+
+    // 1. 时钟与复位
+    wire pclk;
+    wire sys_rst_n = 1'b1;
+    Gowin_rPLL u_pll(.clkout(pclk), .clkin(clk));
+
+    // 2. 串口接收
+    wire [7:0] rx_data;
+    wire       rx_valid;
+    uart_rx u_uart(.clk(pclk), .rx_pin(uart_rx_pin), .data(rx_data), .valid(rx_valid));
+
+    // =====================================================
+    // 3. 静态数据定义
+    // =====================================================
+    localparam PROMPT_LEN = 17;
+    function [7:0] get_prompt_char;
+        input [4:0] idx;
+        begin
+            case(idx)
+                0: get_prompt_char = "r"; 1: get_prompt_char = "o"; 2: get_prompt_char = "o"; 3: get_prompt_char = "t"; 4: get_prompt_char = "@"; 5: get_prompt_char = "s"; 6: get_prompt_char = "h"; 7: get_prompt_char = "e"; 8: get_prompt_char = "n"; 9: get_prompt_char = "_"; 10: get_prompt_char = "k"; 11: get_prompt_char = "a"; 12: get_prompt_char = "i"; 13: get_prompt_char = ":"; 14: get_prompt_char = "~"; 15: get_prompt_char = "#"; 16: get_prompt_char = " ";
+                default: get_prompt_char = 0;
+            endcase
+        end
+    endfunction
+    reg [25*8-1:0] str_line1 = "Simulation Linux Terminal"; 
+    reg [43*8-1:0] str_line2 = "By 2352396 Yu Yaoshen And 2351283 Wu Kai";
+
+    // =====================================================
+    // 4. 终端主逻辑 (增加 clear 指令判断)
+    // =====================================================
+    reg [6:0] cursor_x;
+    reg [4:0] cursor_y;
+    reg [11:0] write_addr;
+    reg [7:0]  write_data;
+    reg        write_en;
+    reg [2:0]  state;
+    localparam S_INIT = 0, S_SHOW_INFO = 1, S_WAIT_READ = 2, S_CLEAR_ALL = 3, S_PROMPT = 4, S_IDLE = 5; 
+    reg [11:0] process_cnt;
+    reg [27:0] timer_cnt;
+    reg [11:0] rel_cnt;
+
+    // --- 【新增】指令匹配逻辑 ---
+    wire [7:0] char_at_cursor_minus_1, char_at_cursor_minus_2, char_at_cursor_minus_3, char_at_cursor_minus_4, char_at_cursor_minus_5;
+    
+    // 指令 'clear' (长度5), 且必须在提示符后输入
+    wire is_clear_cmd = (cursor_x == (PROMPT_LEN + 5)) && 
+                        (char_at_cursor_minus_5 == "c") &&
+                        (char_at_cursor_minus_4 == "l") &&
+                        (char_at_cursor_minus_3 == "e") &&
+                        (char_at_cursor_minus_2 == "a") &&
+                        (char_at_cursor_minus_1 == "r");
+
+    always @(posedge pclk) begin
+        write_en <= 0;
+        
+        if (sys_rst_n == 0) begin state <= S_INIT; timer_cnt <= 0; end
+        else begin
+            case(state)
+                S_INIT: if (timer_cnt < 28'd135_000_000) timer_cnt <= timer_cnt + 1; else begin state <= S_SHOW_INFO; process_cnt <= 0; timer_cnt <= 0; end
+                S_SHOW_INFO: begin
+                    if (process_cnt < 25) begin write_addr <= (12*100) + (37+process_cnt); write_data <= str_line1[(24-process_cnt)*8 +: 8]; write_en <= 1; process_cnt <= process_cnt + 1; end
+                    else if (process_cnt < 68) begin rel_cnt = process_cnt-25; write_addr <= (14*100)+(28+rel_cnt); write_data <= str_line2[(42-rel_cnt)*8 +: 8]; write_en <= 1; process_cnt <= process_cnt + 1; end
+                    else begin state <= S_WAIT_READ; timer_cnt <= 0; end
+                end
+                S_WAIT_READ: if (timer_cnt < 28'd81_000_000) timer_cnt <= timer_cnt + 1; else begin state <= S_CLEAR_ALL; process_cnt <= 0; end
+                S_CLEAR_ALL: if (process_cnt < 3000) begin write_addr <= process_cnt; write_data <= 8'h00; write_en <= 1; process_cnt <= process_cnt + 1; end else begin state <= S_PROMPT; process_cnt <= 0; cursor_x <= 0; cursor_y <= 0; end
+                S_PROMPT: if (process_cnt < PROMPT_LEN) begin write_addr <= (cursor_y*100)+cursor_x; write_data <= get_prompt_char(process_cnt[4:0]); write_en <= 1; cursor_x <= cursor_x + 1; process_cnt <= process_cnt + 1; end else state <= S_IDLE;
+                
+                S_IDLE: begin
+                    if (rx_valid) begin
+                        if (rx_data == 8'h0D || rx_data == 8'h0A) begin
+                            if (is_clear_cmd) begin
+                                state <= S_CLEAR_ALL;
+                                process_cnt <= 0;
+                            end else begin
+                                cursor_x <= 0; 
+                                if (cursor_y < 29) cursor_y <= cursor_y + 1;
+                                else cursor_y <= 0; 
+                                process_cnt <= 0;
+                                state <= S_PROMPT; 
+                            end
+                        end
+                        else if (rx_data == 8'h08 || rx_data == 8'h7F) begin
+                            if (cursor_x > PROMPT_LEN) begin cursor_x <= cursor_x - 1; write_addr <= (cursor_y * 100) + (cursor_x - 1); write_data <= 8'h00; write_en <= 1; end
+                            else if (cursor_x == 0 && cursor_y > 0) begin cursor_y <= cursor_y - 1; cursor_x <= 99; write_addr <= ((cursor_y - 1) * 100) + 99; write_data <= 8'h00; write_en <= 1; end
+                        end
+                        else if (rx_data >= 8'h20 && rx_data <= 8'h7E) begin
+                            write_addr <= (cursor_y * 100) + cursor_x; write_data <= rx_data; write_en <= 1;
+                            if (cursor_x < 99) cursor_x <= cursor_x + 1;
+                            else begin cursor_x <= 0; if (cursor_y < 29) cursor_y <= cursor_y + 1; else cursor_y <= 0; end
+                        end
+                    end
+                end
+            endcase
+        end
+    end
+
+    // =====================================================
+    // 5. 显示子系统 (VRAM 连接修改)
+    // =====================================================
+    wire [10:0] x;
+    wire [9:0]  y;
+    lcd_driver u_driver(.clk(pclk), .rst_n(sys_rst_n), .lcd_hs(lcd_hs), .lcd_vs(lcd_vs), .lcd_de(lcd_de), .pixel_x(x), .pixel_y(y));
+
+    wire [11:0] vram_r_addr_0;
+    wire [7:0]  vram_r_data_0;
+    
+    video_ram u_vram(
+        .clk(pclk),
+        .w_en(write_en), .w_addr(write_addr), .w_data(write_data),
+        // 端口0 (显示)
+        .r_addr_0(vram_r_addr_0),
+        .r_data_0(vram_r_data_0),
+        // 端口1-5 (指令匹配)
+        .r_addr_1((cursor_y * 100) + cursor_x - 1), .r_data_1(char_at_cursor_minus_1),
+        .r_addr_2((cursor_y * 100) + cursor_x - 2), .r_data_2(char_at_cursor_minus_2),
+        .r_addr_3((cursor_y * 100) + cursor_x - 3), .r_data_3(char_at_cursor_minus_3),
+        .r_addr_4((cursor_y * 100) + cursor_x - 4), .r_data_4(char_at_cursor_minus_4),
+        .r_addr_5((cursor_y * 100) + cursor_x - 5), .r_data_5(char_at_cursor_minus_5)
+    );
+    
+    reg [24:0] blink_cnt;
+    always @(posedge pclk) blink_cnt <= blink_cnt + 1'b1;
+    wire blink_en = blink_cnt[24] && (state == S_IDLE); 
+
+    wire is_pixel_on;
+    text_display u_text(
+        .clk(pclk), .pixel_x(x), .pixel_y(y),
+        .cursor_x(cursor_x), .cursor_y(cursor_y), .cursor_blink(blink_en),
+        .vram_addr(vram_r_addr_0),
+        .ascii_code(vram_r_data_0),
+        .pixel_on(is_pixel_on)
+    );
+
+    // =====================================================
+    // 6. 画面输出
+    // =====================================================
+    assign lcd_dclk = pclk;
+    assign lcd_bl   = 1'b1;
+    wire show_bar = (state == S_INIT);
+    wire [15:0] color_bar_data = (x<100)?16'hFFFF:(x<200)?16'hFFE0:(x<300)?16'h07FF:(x<400)?16'h07E0:(x<500)?16'hF81F:(x<600)?16'hF800:(x<700)?16'h001F:16'h0000;
+    wire [15:0] text_data = is_pixel_on ? 16'hFFFF : 16'h0000; 
+    wire [15:0] final_pixel = (!lcd_de) ? 16'h0000 : (show_bar ? color_bar_data : text_data);
+    assign lcd_r = final_pixel[15:11];
+    assign lcd_g = final_pixel[10:5];
+    assign lcd_b = final_pixel[4:0];
+
+endmodule
+
+module uart_rx(
+    input  wire       clk,       // 27MHz
+    input  wire       rx_pin,    // 物理接收引脚
+    output reg  [7:0] data,      // 接收到的字节
+    output reg        valid      // 收到一个字节时，产生一个脉冲
+);
+
+    // 波特率计算: 27,000,000 / 115200 ≈ 234
+    localparam CNT_MAX = 234; 
+
+    reg [7:0] cnt;
+    reg [3:0] bit_idx;
+    reg [1:0] state; // 0:Idle, 1:Start, 2:Data, 3:Stop
+    reg       rx_d1, rx_d2; // 打两拍消除亚稳态
+
+    always @(posedge clk) begin
+        rx_d1 <= rx_pin;
+        rx_d2 <= rx_d1;
+    end
+
+    always @(posedge clk) begin
+        valid <= 0; // 默认无效
+        
+        case(state)
+            0: begin // Idle
+                if (rx_d2 == 0) begin // 检测到起始位(低电平)
+                    state <= 1;
+                    cnt   <= CNT_MAX / 2; // 从中间开始采样
+                end
+            end
+            1: begin // Start bit check
+                if (cnt > 0) cnt <= cnt - 1;
+                else begin
+                    cnt <= CNT_MAX;
+                    state <= 2;
+                    bit_idx <= 0;
+                end
+            end
+            2: begin // Data bits (0-7)
+                if (cnt > 0) cnt <= cnt - 1;
+                else begin
+                    cnt <= CNT_MAX;
+                    data[bit_idx] <= rx_d2; // 采样数据
+                    if (bit_idx == 7) state <= 3;
+                    else bit_idx <= bit_idx + 1;
+                end
+            end
+            3: begin // Stop bit
+                if (cnt > 0) cnt <= cnt - 1;
+                else begin
+                    valid <= 1; // 【关键】告诉外部收到数据了
+                    state <= 0;
+                end
+            end
+        endcase
+    end
+endmodule
+
+module video_ram(
+    input  wire clk,
+    
+    // 写端口 (来自 CPU/串口逻辑)
+    input  wire [11:0] w_addr,
+    input  wire [7:0]  w_data,
+    input  wire        w_en,
+    
+    // 读端口 0 (给显示模块用)
+    input  wire [11:0] r_addr_0,
+    output reg  [7:0]  r_data_0,
+
+    // 【新增】读端口 1-5 (给指令匹配逻辑用)
+    input  wire [11:0] r_addr_1,
+    output reg  [7:0]  r_data_1,
+    input  wire [11:0] r_addr_2,
+    output reg  [7:0]  r_data_2,
+    input  wire [11:0] r_addr_3,
+    output reg  [7:0]  r_data_3,
+    input  wire [11:0] r_addr_4,
+    output reg  [7:0]  r_data_4,
+    input  wire [11:0] r_addr_5,
+    output reg  [7:0]  r_data_5
+);
+
+    // BRAM: 100列 * 30行 = 3000 字节
+    reg [7:0] mem [0:2999];
+
+    // 写操作 (同步写)
+    always @(posedge clk) begin
+        if(w_en) mem[w_addr] <= w_data;
+    end
+
+    // 读操作 (同步读，所有端口并行)
+    always @(posedge clk) begin
+        r_data_0 <= mem[r_addr_0];
+        r_data_1 <= mem[r_addr_1];
+        r_data_2 <= mem[r_addr_2];
+        r_data_3 <= mem[r_addr_3];
+        r_data_4 <= mem[r_addr_4];
+        r_data_5 <= mem[r_addr_5];
+    end
+
+endmodule
+
+引脚定义：
+
+IO_LOC "clk" H11;
+
+IO_LOC "lcd_dclk" R9;
+IO_LOC "lcd_hs" A15;
+IO_LOC "lcd_vs" D14;
+IO_LOC "lcd_de" E15;
+IO_LOC "lcd_r[0]" L9;
+IO_LOC "lcd_r[1]" N8;
+IO_LOC "lcd_r[2]" N9;
+IO_LOC "lcd_r[3]" N7;
+IO_LOC "lcd_r[4]" N6;
+
+IO_LOC "lcd_g[0]" D11;
+IO_LOC "lcd_g[1]" A11;
+IO_LOC "lcd_g[2]" B11;
+IO_LOC "lcd_g[3]" P7;
+IO_LOC "lcd_g[4]" R7;
+IO_LOC "lcd_g[5]" D10;
+
+IO_LOC "lcd_b[0]" B12;
+IO_LOC "lcd_b[1]" C12;
+IO_LOC "lcd_b[2]" B13;
+IO_LOC "lcd_b[3]" A14;
+IO_LOC "lcd_b[4]" B14;
+
+IO_PORT "clk" IO_TYPE=LVCMOS33;
+IO_PORT "lcd_dclk" IO_TYPE=LVCMOS33;
+IO_PORT "lcd_hs"   IO_TYPE=LVCMOS33;
+IO_PORT "lcd_vs"   IO_TYPE=LVCMOS33;
+IO_PORT "lcd_de"   IO_TYPE=LVCMOS33;
+IO_PORT "lcd_r[0]" IO_TYPE=LVCMOS33;
+IO_PORT "lcd_r[1]" IO_TYPE=LVCMOS33;
+IO_PORT "lcd_r[2]" IO_TYPE=LVCMOS33;
+IO_PORT "lcd_r[3]" IO_TYPE=LVCMOS33;
+IO_PORT "lcd_r[4]" IO_TYPE=LVCMOS33;
+
+IO_PORT "lcd_g[0]" IO_TYPE=LVCMOS33;
+IO_PORT "lcd_g[1]" IO_TYPE=LVCMOS33;
+IO_PORT "lcd_g[2]" IO_TYPE=LVCMOS33;
+IO_PORT "lcd_g[3]" IO_TYPE=LVCMOS33;
+IO_PORT "lcd_g[4]" IO_TYPE=LVCMOS33;
+IO_PORT "lcd_g[5]" IO_TYPE=LVCMOS33;
+
+IO_PORT "lcd_b[0]" IO_TYPE=LVCMOS33;
+IO_PORT "lcd_b[1]" IO_TYPE=LVCMOS33;
+IO_PORT "lcd_b[2]" IO_TYPE=LVCMOS33;
+IO_PORT "lcd_b[3]" IO_TYPE=LVCMOS33;
+IO_PORT "lcd_b[4]" IO_TYPE=LVCMOS33;
+
+IO_LOC "uart_rx_pin" T13;
+IO_PORT "uart_rx_pin" IO_TYPE=LVCMOS33 PULL_MODE=UP;

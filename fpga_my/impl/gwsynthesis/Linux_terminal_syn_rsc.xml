@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Module name="top" Register="101" Alu="48" Lut="865" MULT9X9="1" MULTADDALU18X18="1" T_Register="147(101)" T_Alu="79(48)" T_Lut="1003(865)" T_MULT9X9="1(1)" T_MULTADDALU18X18="2(1)" T_Bsram="12(0)">
+ <SubModule name="u_pll"/>
+ <SubModule name="u_uart" Register="25" Lut="37" T_Register="25(25)" T_Lut="37(37)"/>
+ <SubModule name="u_driver" Register="21" Alu="19" Lut="44" T_Register="21(21)" T_Alu="19(19)" T_Lut="44(44)"/>
+ <SubModule name="u_vram" Bsram="12" T_Bsram="12(12)"/>
+ <SubModule name="u_text" Alu="12" MULTADDALU18X18="1" T_Alu="12(12)" T_Lut="57(0)" T_MULTADDALU18X18="1(1)">
+  <SubModule name="u_font_rom" Lut="57" T_Lut="57(57)"/>
+ </SubModule>
+</Module>

@@ -1,0 +1,70 @@
+GowinSynthesis start
+Running parser ...
+Analyzing Verilog file 'D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\font_rom.v'
+Analyzing Verilog file 'D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\gowin_rpll\gowin_rpll.v'
+Analyzing Verilog file 'D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\lcd_driver.v'
+Analyzing Verilog file 'D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\text_display.v'
+Analyzing Verilog file 'D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\top.v'
+Analyzing Verilog file 'D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\uart_rx.v'
+Analyzing Verilog file 'D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\video_ram.v'
+Compiling module 'top'("D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\top.v":1)
+WARN  (EX3780) : Using initial value of 'str_line1' since it is never assigned("D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\top.v":35)
+WARN  (EX3780) : Using initial value of 'str_line2' since it is never assigned("D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\top.v":36)
+Compiling module 'Gowin_rPLL'("D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\gowin_rpll\gowin_rpll.v":10)
+Compiling module 'uart_rx'("D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\uart_rx.v":1)
+WARN  (EX3791) : Expression size 32 truncated to fit in target size 8("D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\uart_rx.v":32)
+WARN  (EX3791) : Expression size 32 truncated to fit in target size 8("D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\uart_rx.v":40)
+WARN  (EX3791) : Expression size 5 truncated to fit in target size 4("D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\uart_rx.v":45)
+WARN  (EX3791) : Expression size 32 truncated to fit in target size 8("D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\uart_rx.v":49)
+WARN  (EX3791) : Expression size 29 truncated to fit in target size 28("D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\top.v":69)
+WARN  (EX3791) : Expression size 14 truncated to fit in target size 12("D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\top.v":71)
+WARN  (EX3791) : Expression size 13 truncated to fit in target size 12("D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\top.v":71)
+WARN  (EX3791) : Expression size 32 truncated to fit in target size 12("D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\top.v":72)
+WARN  (EX3791) : Expression size 14 truncated to fit in target size 12("D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\top.v":72)
+WARN  (EX3791) : Expression size 13 truncated to fit in target size 12("D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\top.v":72)
+WARN  (EX3791) : Expression size 29 truncated to fit in target size 28("D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\top.v":75)
+WARN  (EX3791) : Expression size 13 truncated to fit in target size 12("D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\top.v":76)
+WARN  (EX3791) : Expression size 13 truncated to fit in target size 12("D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\top.v":77)
+WARN  (EX3791) : Expression size 8 truncated to fit in target size 7("D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\top.v":77)
+WARN  (EX3791) : Expression size 13 truncated to fit in target size 12("D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\top.v":77)
+WARN  (EX3791) : Expression size 6 truncated to fit in target size 5("D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\top.v":87)
+WARN  (EX3791) : Expression size 32 truncated to fit in target size 7("D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\top.v":94)
+WARN  (EX3791) : Expression size 32 truncated to fit in target size 12("D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\top.v":94)
+WARN  (EX3791) : Expression size 32 truncated to fit in target size 5("D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\top.v":95)
+WARN  (EX3791) : Expression size 32 truncated to fit in target size 12("D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\top.v":95)
+WARN  (EX3791) : Expression size 13 truncated to fit in target size 12("D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\top.v":98)
+WARN  (EX3791) : Expression size 8 truncated to fit in target size 7("D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\top.v":99)
+WARN  (EX3791) : Expression size 6 truncated to fit in target size 5("D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\top.v":100)
+Compiling module 'lcd_driver'("D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\lcd_driver.v":1)
+WARN  (EX3791) : Expression size 32 truncated to fit in target size 11("D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\lcd_driver.v":76)
+WARN  (EX3791) : Expression size 32 truncated to fit in target size 10("D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\lcd_driver.v":77)
+Compiling module 'video_ram'("D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\video_ram.v":1)
+Extracting RAM for identifier 'mem'("D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\video_ram.v":27)
+WARN  (EX3670) : Actual bit length 32 differs from formal bit length 12 for port 'r_addr_1'("D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\top.v":125)
+WARN  (EX3670) : Actual bit length 32 differs from formal bit length 12 for port 'r_addr_2'("D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\top.v":126)
+WARN  (EX3670) : Actual bit length 32 differs from formal bit length 12 for port 'r_addr_3'("D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\top.v":127)
+WARN  (EX3670) : Actual bit length 32 differs from formal bit length 12 for port 'r_addr_4'("D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\top.v":128)
+WARN  (EX3670) : Actual bit length 32 differs from formal bit length 12 for port 'r_addr_5'("D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\top.v":129)
+Compiling module 'text_display'("D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\text_display.v":1)
+WARN  (EX3791) : Expression size 13 truncated to fit in target size 12("D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\text_display.v":24)
+Compiling module 'font_rom'("D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\src\font_rom.v":1)
+NOTE  (EX0101) : Current top module is "top"
+[5%] Running netlist conversion ...
+Running device independent optimization ...
+[10%] Optimizing Phase 0 completed
+[15%] Optimizing Phase 1 completed
+[25%] Optimizing Phase 2 completed
+Running inference ...
+[30%] Inferring Phase 0 completed
+[40%] Inferring Phase 1 completed
+[50%] Inferring Phase 2 completed
+[55%] Inferring Phase 3 completed
+Running technical mapping ...
+[60%] Tech-Mapping Phase 0 completed
+[65%] Tech-Mapping Phase 1 completed
+[75%] Tech-Mapping Phase 2 completed
+[80%] Tech-Mapping Phase 3 completed
+[90%] Tech-Mapping Phase 4 completed
+[95%] Generate netlist file "D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\impl\gwsynthesis\Linux_terminal.vg" completed
+[100%] Generate report file "D:\shen\3-code\ichip-code\final\Linux_Terminal_Code\impl\gwsynthesis\Linux_terminal_syn.rpt.html" completed
+GowinSynthesis finish

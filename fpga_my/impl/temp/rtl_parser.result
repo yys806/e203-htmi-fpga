@@ -1,0 +1,62 @@
+[
+ {
+  "InstFile" : "D:/shen/3-code/ichip-code/final/Linux_v3/fpga_my/src/top.v",
+  "InstLine" : 1,
+  "InstName" : "top",
+  "ModuleFile" : "D:/shen/3-code/ichip-code/final/Linux_v3/fpga_my/src/top.v",
+  "ModuleLine" : 1,
+  "ModuleName" : "top",
+  "SubInsts" : [
+   {
+    "InstFile" : "D:/shen/3-code/ichip-code/final/Linux_v3/fpga_my/src/top.v",
+    "InstLine" : 15,
+    "InstName" : "u_pll",
+    "ModuleFile" : "D:/shen/3-code/ichip-code/final/Linux_v3/fpga_my/src/gowin_rpll/gowin_rpll.v",
+    "ModuleLine" : 10,
+    "ModuleName" : "Gowin_rPLL"
+   },
+   {
+    "InstFile" : "D:/shen/3-code/ichip-code/final/Linux_v3/fpga_my/src/top.v",
+    "InstLine" : 20,
+    "InstName" : "u_uart",
+    "ModuleFile" : "D:/shen/3-code/ichip-code/final/Linux_v3/fpga_my/src/uart_rx.v",
+    "ModuleLine" : 1,
+    "ModuleName" : "uart_rx"
+   },
+   {
+    "InstFile" : "D:/shen/3-code/ichip-code/final/Linux_v3/fpga_my/src/top.v",
+    "InstLine" : 113,
+    "InstName" : "u_driver",
+    "ModuleFile" : "D:/shen/3-code/ichip-code/final/Linux_v3/fpga_my/src/lcd_driver.v",
+    "ModuleLine" : 1,
+    "ModuleName" : "lcd_driver"
+   },
+   {
+    "InstFile" : "D:/shen/3-code/ichip-code/final/Linux_v3/fpga_my/src/top.v",
+    "InstLine" : 118,
+    "InstName" : "u_vram",
+    "ModuleFile" : "D:/shen/3-code/ichip-code/final/Linux_v3/fpga_my/src/video_ram.v",
+    "ModuleLine" : 1,
+    "ModuleName" : "video_ram"
+   },
+   {
+    "InstFile" : "D:/shen/3-code/ichip-code/final/Linux_v3/fpga_my/src/top.v",
+    "InstLine" : 137,
+    "InstName" : "u_text",
+    "ModuleFile" : "D:/shen/3-code/ichip-code/final/Linux_v3/fpga_my/src/text_display.v",
+    "ModuleLine" : 1,
+    "ModuleName" : "text_display",
+    "SubInsts" : [
+     {
+      "InstFile" : "D:/shen/3-code/ichip-code/final/Linux_v3/fpga_my/src/text_display.v",
+      "InstLine" : 32,
+      "InstName" : "u_font_rom",
+      "ModuleFile" : "D:/shen/3-code/ichip-code/final/Linux_v3/fpga_my/src/font_rom.v",
+      "ModuleLine" : 1,
+      "ModuleName" : "font_rom"
+     }
+    ]
+   }
+  ]
+ }
+]
