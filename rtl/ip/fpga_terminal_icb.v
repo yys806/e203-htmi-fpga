@@ -153,6 +153,10 @@ module fpga_terminal_icb (
             if (hw_rx_valid) begin
                 fifo_push(hw_rx_data);
             end
+            // software injected char (same clock domain)
+            if (csr_char_in_pulse) begin
+                fifo_push(csr_char_in_data);
+            end
 
             // IRQ pending when FIFO not empty
             if (ctrl_irq_en && !fifo_empty)
@@ -388,12 +392,6 @@ module fpga_terminal_icb (
             if (consume_char)
                 fifo_pop();
         end
-    end
-
-    // allow SW to push into FIFO
-    always @(posedge pclk) begin
-        if (!reset && csr_char_in_pulse)
-            fifo_push(csr_char_in_data);
     end
 
     // ------------------------------------------------------------------------
