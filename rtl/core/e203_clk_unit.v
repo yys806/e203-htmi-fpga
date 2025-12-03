@@ -81,7 +81,7 @@ defparam pll_inst_rtc.CLKOUTD_BYPASS = "false";
 defparam pll_inst_rtc.DYN_SDIV_SEL = 128;   //fclkod = 4.5MHz/128 = 35.1562kHz
 defparam pll_inst_rtc.CLKOUTD_SRC = "CLKOUT";
 defparam pll_inst_rtc.CLKOUTD3_SRC = "CLKOUT";
-defparam pll_inst_rtc.DEVICE = "GW2A-55";
+defparam pll_inst_rtc.DEVICE = "GW2A-18";
 
 PLL pll_inst_system (
     .CLKOUT(clkout_system),

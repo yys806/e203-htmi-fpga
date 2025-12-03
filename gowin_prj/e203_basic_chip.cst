@@ -35,7 +35,7 @@ IO_LOC "lcd_vs"   D14;
 IO_LOC "lcd_de"   E15;
 IO_LOC "lcd_r[0]" L9;
 IO_LOC "lcd_r[1]" N8;
-IO_LOC "lcd_r[2]" M9;
+IO_LOC "lcd_r[2]" N9;
 IO_LOC "lcd_r[3]" N7;
 IO_LOC "lcd_r[4]" N6;
 IO_LOC "lcd_g[0]" D11;
