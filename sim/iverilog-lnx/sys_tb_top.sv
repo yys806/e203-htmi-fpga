@@ -10,9 +10,12 @@ module sys_tb_top();
   reg  rst_n;
 
   wire hfclk = clk;
-  wire uart_rx;
-  wire [31:0] gpio; 
-  assign uart_rx = gpio[17];
+
+  // GPIO 接到 SoC，bit16 复用为终端 UART RX
+  reg  [31:0] gpio_in_tb;
+  wire [31:0] gpio_out_tb;
+  wire term_uart_rx;
+  assign term_uart_rx = gpio_in_tb[16];
 
 `ifdef USING_IVERILOG
   initial begin
@@ -39,6 +42,7 @@ module sys_tb_top();
     clk        <=0;
     lfextclk   <=0;
     rst_n      <=0;
+    gpio_in_tb <=32'hFFFF_FFFF; // 空闲高
     #320us rst_n <=1;
   end
 
@@ -53,42 +57,28 @@ module sys_tb_top();
      #33 lfextclk <= ~lfextclk;
   end
 
-  //uart rx period
-  int uart_rx_period = 8750; //8.75us
-  reg [7:0] uart_rx_byte;
-//receive uart data
-  task uart_rx_data(output bit [7:0] rx_data);
-    reg [7:0] rx_tmp;
-    //1 bit start bit
-    @(negedge uart_rx);
-    #uart_rx_period;
-
-    // 8 bit data: LSB first
-    for(int i=0; i<8; i++)
+  // UART 发送到 SoC（115200bps，bit 时间约 8.68us）
+  localparam int UART_BIT = 8680; // ns
+  task send_uart_byte(input [7:0] b);
+    integer i;
     begin
-      #(uart_rx_period/2);        
-      rx_tmp[i] = uart_rx;
-      #(uart_rx_period/2);          
+      gpio_in_tb[16] <= 1'b0; #UART_BIT;        // start
+      for(i=0; i<8; i=i+1) begin
+        gpio_in_tb[16] <= b[i]; #UART_BIT;      // data
+      end
+      gpio_in_tb[16] <= 1'b1; #UART_BIT;        // stop
     end
-
-    //1 bit stop bit
-    #(uart_rx_period/2);
-    rx_data = rx_tmp;
-
   endtask
 
-// receive data from e203 core
-initial begin
-  int j = 0;
-
-  #5ms;
-
-  forever begin
-    uart_rx_data(uart_rx_byte);
-    //$display("rx_data[%x] = %x", j, uart_rx_byte);    
+  // 向终端发送示例数据
+  initial begin
+    #(400_000); // 等待复位后约400us
+    send_uart_byte("A");
+    send_uart_byte("B");
+    send_uart_byte("C");
+    send_uart_byte(8'h0D); // CR
+    send_uart_byte(8'h0A); // LF
   end
-
-end  
 
 
     e203_soc_demo uut (
@@ -99,8 +89,8 @@ end
         .tdi                 (), 
         .tdo                 (),  
 
-        .gpio_in             (),
-        .gpio_out            (gpio),
+        .gpio_in             (gpio_in_tb),
+        .gpio_out            (gpio_out_tb),
         .qspi_in             (),
         .qspi_out            (),      
         .qspi_sck            (),  

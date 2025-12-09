@@ -1,7 +1,12 @@
 #!/bin/bash -f
 iverilog -g2005-sv -o wave.out -I ../rtl/core ./sys_tb_top.sv ./gowin_sim_lib/gw2a/prim_sim.v \
 ../rtl/core/e203_defines.v \
-../rtl/ip/my_periph_example.v \
+../rtl/ip/fpga_terminal_icb.v \
+../rtl/ip/uart_rx.v \
+../rtl/ip/video_ram.v \
+../rtl/ip/text_display.v \
+../rtl/ip/font_rom.v \
+../rtl/ip/lcd_driver.v \
 ../rtl/core/e203_biu.v \
 ../rtl/core/e203_clk_ctrl.v \
 ../rtl/core/e203_clkgate.v \
@@ -143,4 +148,3 @@ iverilog -g2005-sv -o wave.out -I ../rtl/core ./sys_tb_top.sv ./gowin_sim_lib/gw
 ../rtl/core/sirv_uarttx.v \
 ../rtl/core/sirv_uart.v \
 ../rtl/core/sirv_wdog.v \
-
