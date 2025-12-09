@@ -120,6 +120,8 @@ module fpga_terminal_icb (
     reg  csr_char_in_pulse;
     reg  [7:0] csr_char_in_data;
     reg  csr_rx_pop_pulse;
+    reg  pop_req;
+    reg  pop_ack;
 
     always @(posedge pclk or posedge reset) begin
         if (reset) begin
@@ -136,6 +138,8 @@ module fpga_terminal_icb (
             csr_char_in_pulse <= 1'b0;
             csr_char_in_data  <= 8'd0;
             csr_rx_pop_pulse  <= 1'b0;
+            pop_req         <= 1'b0;
+            pop_ack         <= 1'b0;
             irq_pending     <= 1'b0;
             rx_wptr         <= 2'd0;
             rx_rptr         <= 2'd0;
@@ -148,6 +152,7 @@ module fpga_terminal_icb (
             csr_char_in_pulse <= 1'b0;
             csr_rx_pop_pulse  <= 1'b0;
             clear_request     <= 1'b0;
+            pop_ack           <= 1'b0;
 
             // hardware RX
             if (hw_rx_valid) begin
@@ -232,8 +237,9 @@ module fpga_terminal_icb (
             end
 
             // terminal consumer pop
-            if (consume_char && !fifo_empty) begin
+            if (pop_req && !fifo_empty) begin
                 fifo_pop();
+                pop_ack <= 1'b1;
             end
 
         end
@@ -275,7 +281,7 @@ module fpga_terminal_icb (
     wire bar_active = (state == S_INIT);
 
     // character source: FIFO (UART or SW)
-    wire char_avail = !fifo_empty;
+    wire char_avail = !fifo_empty && !pop_req;
     wire [7:0] char_data = fifo_rdata;
     reg  consume_char;
 
@@ -289,7 +295,10 @@ module fpga_terminal_icb (
             process_cnt <= 0;
             cursor_x <= 0;
             cursor_y <= 0;
+            pop_req <= 1'b0;
         end else begin
+            if (pop_ack)
+                pop_req <= 1'b0;
             // SW VRAM write has priority
             if (csr_vram_we) begin
                 write_en <= 1'b1;
@@ -359,6 +368,7 @@ module fpga_terminal_icb (
                         process_cnt <= 0;
                     end else if (char_avail) begin
                         consume_char <= 1'b1;
+                        pop_req <= 1'b1;
                         if (char_data == 8'h0D || char_data == 8'h0A) begin
                             cursor_x <= 0;
                             if (cursor_y < 29) cursor_y <= cursor_y + 1'b1;
