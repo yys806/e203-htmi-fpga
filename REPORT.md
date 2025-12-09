@@ -53,8 +53,11 @@ RISC-V；E203；ICB；HDMI/LCD；UART；字符终端；640×480@60Hz；Tang Prim
 - FIFO 弹出：`pop_req`→`pop_ack`→`fifo_pop`，确认单次请求只弹一次。
 - 状态机：`state` INIT→SHOW_INFO→WAIT_READ→CLEAR_ALL→PROMPT→IDLE，`write_en/write_addr/write_data` 簇写信息行与清屏。
 - VRAM：写入与显示读口 `r_addr_0/r_data_0` 一致，字符位置正确。
-- 截图占位（UART 帧示例，`term_uart_rx` 发送 “A”）：  
-  ![UART A frame](TODO_UART_FRAME.png)
+- 截图占位与说明：  
+  1) UART 帧示例，`term_uart_rx` 发送 “A”：起始位=0，8 数据位 LSB→MSB（0x41），停止位=1，位宽≈8.68µs（115200bps）。  
+     ![UART A frame](TODO_UART_FRAME.png)  
+  2) 显示时序：`lcd_dclk` 方波；`lcd_hs` 低脉冲（行同步，周期≈31.7µs）；`lcd_de` 低有效，长低脉冲对应行内有效区；当前窗口 `lcd_vs` 高电平（帧同步低脉冲周期≈16.7ms，未落入本窗口）。  
+     ![LCD timing](TODO_LCD_TIMING.png)
 
 ## 6 硬件测试方法和流程
 1) 软件：进入 `firmware/hello_world`（或自定义应用）`make clean && make` 生成 `ram.hex`。

@@ -271,8 +271,8 @@ module fpga_terminal_icb (
     reg [2:0]  state;
     localparam S_INIT = 0, S_SHOW_INFO = 1, S_WAIT_READ = 2, S_CLEAR_ALL = 3, S_PROMPT = 4, S_IDLE = 5;
 `ifdef SIM_FAST
-    localparam integer INIT_DELAY = 50_000;     // ~2.8ms @18MHz
-    localparam integer WAIT_DELAY = 50_000;
+    localparam integer INIT_DELAY = 10_000;     // ~0.56ms @18MHz
+    localparam integer WAIT_DELAY = 10_000;
 `else
     localparam integer INIT_DELAY = 135_000_000; // ~7.5s @18MHz
     localparam integer WAIT_DELAY = 135_000_000;

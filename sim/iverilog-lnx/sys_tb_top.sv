@@ -1,7 +1,5 @@
-
 `timescale 1ns/10ps
 `define USING_IVERILOG
-
 
 module sys_tb_top();
 
@@ -11,7 +9,7 @@ module sys_tb_top();
 
   wire hfclk = clk;
 
-  // GPIO æ¥åˆ° SoCï¼Œbit16 å¤ç”¨ä¸ºç»ˆç«¯ UART RX
+  // GPIO ½Óµ½ SoC£¬bit16 ¸´ÓÃÎªÖÕ¶Ë UART RX
   reg  [31:0] gpio_in_tb;
   wire [31:0] gpio_out_tb;
   wire term_uart_rx;
@@ -20,15 +18,15 @@ module sys_tb_top();
 `ifdef USING_IVERILOG
   initial begin
     $dumpfile("waveout.vcd");
-    // å…ˆ dump å…¨å±€ï¼Œå†ç”¨ dumpon/dumpoff æ§åˆ¶æ—¶çª—ï¼Œé¿å…æ–‡ä»¶è¿‡å¤§
+    // ¿ØÖÆ VCD ´°¿Ú£¬±ÜÃâÎÄ¼ş¹ı´ó
     $dumpvars(0, sys_tb_top);
     $dumpoff;
-    #300_000;   // 0.3ms åå¼€å§‹è®°å½•ï¼ˆè¶Šè¿‡å¤ä½å’Œé•¿å»¶æ—¶ï¼‰
+    #100_000;    // 0.1ms ¿ªÊ¼¼ÇÂ¼
     $dumpon;
-    #1_700_000; // å†è®°å½•çº¦1.7msï¼Œåˆ° 2.0ms å·¦å³
+    #5_900_000;  // ¼ÇÂ¼µ½Ô¼ 6.0ms
     $dumpoff;
   end
- `endif
+`endif
 
 `ifdef USING_VCS
   initial begin
@@ -37,33 +35,30 @@ module sys_tb_top();
   end
 `endif
 
+  // ·ÂÕæ×ÜÊ±³¤ÑÓ³¤µ½ 8ms£¬¸²¸Ç²ÊÌõ½áÊøÓëÎÄ±¾Ğ´Èë
   initial begin
-    #5ms;
+    #8ms;
+    $display("[TB] finished at %0t", $time);
     $finish;
   end
 
-
   initial begin
-
-    clk        <=0;
-    lfextclk   <=0;
-    rst_n      <=0;
-    gpio_in_tb <=32'hFFFF_FFFF; // ç©ºé—²é«˜
-    #320us rst_n <=1;
+    clk        <= 0;
+    lfextclk   <= 0;
+    rst_n      <= 0;
+    gpio_in_tb <= 32'hFFFF_FFFF; // ¿ÕÏĞ¸ß
+    #320us rst_n <= 1;
   end
 
-
-  always
-  begin 
+  always begin
      #18.52 clk <= ~clk;
   end
 
-  always
-  begin 
+  always begin
      #33 lfextclk <= ~lfextclk;
   end
 
-  // UART å‘é€åˆ° SoCï¼ˆ115200bpsï¼Œbit æ—¶é—´çº¦ 8.68usï¼‰
+  // UART ·¢ËÍµ½ SoC£¨115200bps£¬bit Ê±¼äÔ¼ 8.68us£©
   localparam int UART_BIT = 8680; // ns
   task send_uart_byte(input [7:0] b);
     integer i;
@@ -76,9 +71,9 @@ module sys_tb_top();
     end
   endtask
 
-  // å‘ç»ˆç«¯å‘é€ç¤ºä¾‹æ•°æ®
+  // ÏòÖÕ¶Ë·¢ËÍÊ¾ÀıÊı¾İ
   initial begin
-    #(400_000); // ç­‰å¾…å¤ä½åçº¦400us
+    #(400_000); // µÈ´ı¸´Î»ºóÔ¼400us
     send_uart_byte("A");
     send_uart_byte("B");
     send_uart_byte("C");
@@ -86,8 +81,7 @@ module sys_tb_top();
     send_uart_byte(8'h0A); // LF
   end
 
-
-    e203_soc_demo uut (
+  e203_soc_demo uut (
         .clk_in              (clk),  
 
         .tck                 (), 
@@ -115,7 +109,7 @@ module sys_tb_top();
         .aon_pmu_vddpaden    () 
     );
 
-  // ä»¿çœŸåŠ é€Ÿï¼šå¼ºåˆ¶ PLL é”å®šä¸æ—¶é’Ÿç›´è¿ï¼Œé¿å… lock ä½å¯¼è‡´å†…éƒ¨å¤ä½ä¸é‡Šæ”¾
+  // ·ÂÕæ¼ÓËÙ£ºÇ¿ÖÆ PLL Ëø¶¨ÓëÊ±ÖÓÖ±Á¬£¬±ÜÃâ lock µÍµ¼ÖÂÄÚ²¿¸´Î»²»ÊÍ·Å
   initial begin
     force uut.clk_unit.lock = 1'b1;
     force uut.clk_unit.clkout_system = clk;
