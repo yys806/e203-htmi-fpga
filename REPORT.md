@@ -53,11 +53,22 @@ RISC-V；E203；ICB；HDMI/LCD；UART；字符终端；640×480@60Hz；Tang Prim
 - FIFO 弹出：`pop_req`→`pop_ack`→`fifo_pop`，确认单次请求只弹一次。
 - 状态机：`state` INIT→SHOW_INFO→WAIT_READ→CLEAR_ALL→PROMPT→IDLE，`write_en/write_addr/write_data` 簇写信息行与清屏。
 - VRAM：写入与显示读口 `r_addr_0/r_data_0` 一致，字符位置正确。
-- 截图占位与说明：  
+- 仿真过程截图：  
+  - ![bash](img/1-1.png)
+  执行 `bash sim_run_sys_tb.sh`  
+  - ![vvp](img/1-2.png)
+  执行 `vvp wave.out` 生成 VCD  
+  - ![gtkwave](img/1-3.png)
+  运行 `gtkwave waveout.vcd`  
+  - ![structure](img/1-4.png)
+  GTKWave 层级展开示例  
+- 仿真波形截图与说明：  
   1) UART 帧示例，`term_uart_rx` 发送 “A”：起始位=0，8 数据位 LSB→MSB（0x41），停止位=1，位宽≈8.68µs（115200bps）。  
-     ![UART A frame](TODO_UART_FRAME.png)  
+     ![UART A frame](img/1.png)  
   2) 显示时序：`lcd_dclk` 方波；`lcd_hs` 低脉冲（行同步，周期≈31.7µs）；`lcd_de` 低有效，长低脉冲对应行内有效区；当前窗口 `lcd_vs` 高电平（帧同步低脉冲周期≈16.7ms，未落入本窗口）。  
-     ![LCD timing](TODO_LCD_TIMING.png)
+     ![LCD timing](img/2.png)  
+  3) 彩条→文本切换：`bar_active` 从 1→0，显示管线时序（`lcd_hs/de/dclk`）保持正常，表明已进入文本模式。  
+     ![Bar to text](img/3.png)
 
 ## 6 硬件测试方法和流程
 1) 软件：进入 `firmware/hello_world`（或自定义应用）`make clean && make` 生成 `ram.hex`。

@@ -65,11 +65,22 @@
   gtkwave waveout.vcd &    # 打开波形
   ```
 - 关注信号：`term_uart_rx`；`pop_req/pop_ack/fifo_empty/fifo_rdata/write_en/write_addr/write_data/cursor_x/cursor_y/state`；`lcd_dclk/lcd_hs/lcd_vs/lcd_de`。
-- 截图占位与说明：  
+- 仿真过程截图：  
+  - ![bash](img/1-1.png)
+  执行 `bash sim_run_sys_tb.sh`  
+  - ![vvp](img/1-2.png)
+  执行 `vvp wave.out` 生成 VCD  
+  - ![gtkwave](img/1-3.png)
+  运行 `gtkwave waveout.vcd`  
+  - ![structure](img/1-4.png)
+  GTKWave 层级展开示例  
+- 仿真波形截图与说明：  
   1) UART 帧（`term_uart_rx` 发送 “A”）：起始位=0，8 数据位 LSB→MSB（0x41），停止位=1，位宽≈8.68µs（115200bps）。  
-     ![UART A frame](TODO_UART_FRAME.png)  
+     ![UART A frame](img/1.png)  
   2) 显示时序：`lcd_dclk` 连续方波；`lcd_hs` 为低脉冲（行同步，周期≈31.7µs）；`lcd_de` 低有效，长低脉冲对应行内有效区；`lcd_vs` 在本窗口高电平（帧同步低脉冲周期≈16.7ms，当前窗口未落入）。  
-     ![LCD timing](TODO_LCD_TIMING.png)
+     ![LCD timing](img/2.png)  
+  3) 彩条→文本切换：`bar_active` 从 1→0，表明彩条结束进入文本模式，同时 `lcd_hs/de/dclk` 时序正常。  
+     ![Bar to text](img/3.png)
 
 ## 运行与验证
 1. 选正确 UART COM（非 JTAG），115200 8N1。
