@@ -20,9 +20,13 @@ module sys_tb_top();
 `ifdef USING_IVERILOG
   initial begin
     $dumpfile("waveout.vcd");
-    // 仅dump终端实例，避免文件过大
-    $dumpvars(1, sys_tb_top.uut.e203_soc_ins.u_e203_subsys_top.u_e203_subsys_perips.u_my_periph_top);
-    // 如需UART线，可追加：$dumpvars(1, sys_tb_top.term_uart_rx);
+    // 先 dump 全局，再用 dumpon/dumpoff 控制时窗，避免文件过大
+    $dumpvars(0, sys_tb_top);
+    $dumpoff;
+    #300_000;   // 0.3ms 后开始记录（越过复位和长延时）
+    $dumpon;
+    #1_700_000; // 再记录约1.7ms，到 2.0ms 左右
+    $dumpoff;
   end
  `endif
 
