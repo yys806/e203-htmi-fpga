@@ -6,7 +6,7 @@ module uart_rx(
 );
 
     // 波特率计算: 27,000,000 / 115200 ≈ 234
-    localparam CNT_MAX = 234; 
+    localparam CNT_MAX = 156.25; 
 
     reg [7:0] cnt;
     reg [3:0] bit_idx;
