@@ -120,7 +120,6 @@ module fpga_terminal_icb (
     reg  csr_char_in_pulse;
     reg  [7:0] csr_char_in_data;
     reg  csr_rx_pop_pulse;
-    reg  term_pop_req;
 
     always @(posedge pclk or posedge reset) begin
         if (reset) begin
@@ -233,9 +232,8 @@ module fpga_terminal_icb (
             end
 
             // terminal consumer pop
-            if (term_pop_req && !fifo_empty) begin
+            if (consume_char && !fifo_empty) begin
                 fifo_pop();
-                term_pop_req <= 1'b0;
             end
 
         end
@@ -277,7 +275,7 @@ module fpga_terminal_icb (
     wire bar_active = (state == S_INIT);
 
     // character source: FIFO (UART or SW)
-    wire char_avail = !fifo_empty && !term_pop_req;
+    wire char_avail = !fifo_empty;
     wire [7:0] char_data = fifo_rdata;
     reg  consume_char;
 
@@ -291,7 +289,6 @@ module fpga_terminal_icb (
             process_cnt <= 0;
             cursor_x <= 0;
             cursor_y <= 0;
-            term_pop_req <= 1'b0;
         end else begin
             // SW VRAM write has priority
             if (csr_vram_we) begin
@@ -397,8 +394,6 @@ module fpga_terminal_icb (
                 default: state <= S_INIT;
             endcase
 
-            if (consume_char)
-                term_pop_req <= 1'b1;
         end
     end
 
