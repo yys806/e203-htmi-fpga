@@ -115,4 +115,12 @@ module sys_tb_top();
         .aon_pmu_vddpaden    () 
     );
 
+  // 仿真加速：强制 PLL 锁定与时钟直连，避免 lock 低导致内部复位不释放
+  initial begin
+    force uut.clk_unit.lock = 1'b1;
+    force uut.clk_unit.clkout_system = clk;
+    force uut.clk_unit.clkout_rtc = lfextclk;
+    force uut.reset_n = rst_n;
+  end
+
 endmodule
