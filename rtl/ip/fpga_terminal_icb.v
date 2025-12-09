@@ -138,7 +138,6 @@ module fpga_terminal_icb (
             csr_char_in_pulse <= 1'b0;
             csr_char_in_data  <= 8'd0;
             csr_rx_pop_pulse  <= 1'b0;
-            pop_req         <= 1'b0;
             pop_ack         <= 1'b0;
             irq_pending     <= 1'b0;
             rx_wptr         <= 2'd0;
@@ -240,7 +239,6 @@ module fpga_terminal_icb (
             if (pop_req && !fifo_empty) begin
                 fifo_pop();
                 pop_ack <= 1'b1;
-                pop_req <= 1'b0;
             end
 
         end
