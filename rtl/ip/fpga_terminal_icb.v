@@ -120,7 +120,6 @@ module fpga_terminal_icb (
     reg  csr_char_in_pulse;
     reg  [7:0] csr_char_in_data;
     reg  csr_rx_pop_pulse;
-    reg  term_pop_req;
 
     always @(posedge pclk or posedge reset) begin
         if (reset) begin
@@ -232,10 +231,6 @@ module fpga_terminal_icb (
                 endcase
             end
 
-            // pop request from terminal consumer
-            if (term_pop_req && !fifo_empty) begin
-                fifo_pop();
-            end
         end
     end
 
@@ -278,12 +273,10 @@ module fpga_terminal_icb (
     wire char_avail = !fifo_empty;
     wire [7:0] char_data = fifo_rdata;
     reg  consume_char;
-    reg  term_pop_req;
 
     always @(posedge pclk) begin
         write_en <= 1'b0;
         consume_char <= 1'b0;
-        term_pop_req <= 1'b0;
 
         if (reset) begin
             state <= S_INIT;
@@ -397,7 +390,8 @@ module fpga_terminal_icb (
             endcase
 
             // consume after state logic to allow pop in same cycle
-            term_pop_req <= consume_char;
+            if (consume_char)
+                fifo_pop();
         end
     end
 
