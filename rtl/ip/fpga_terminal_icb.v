@@ -120,6 +120,8 @@ module fpga_terminal_icb (
     reg  csr_char_in_pulse;
     reg  [7:0] csr_char_in_data;
     reg  csr_rx_pop_pulse;
+    reg  term_pop_req;
+    reg  term_pop_ack;
 
     always @(posedge pclk or posedge reset) begin
         if (reset) begin
@@ -136,6 +138,7 @@ module fpga_terminal_icb (
             csr_char_in_pulse <= 1'b0;
             csr_char_in_data  <= 8'd0;
             csr_rx_pop_pulse  <= 1'b0;
+            term_pop_ack    <= 1'b0;
             irq_pending     <= 1'b0;
             rx_wptr         <= 2'd0;
             rx_rptr         <= 2'd0;
@@ -148,6 +151,7 @@ module fpga_terminal_icb (
             csr_char_in_pulse <= 1'b0;
             csr_rx_pop_pulse  <= 1'b0;
             clear_request     <= 1'b0;
+            term_pop_ack      <= 1'b0;
 
             // hardware RX
             if (hw_rx_valid) begin
@@ -234,6 +238,7 @@ module fpga_terminal_icb (
             // terminal consumer pop
             if (term_pop_req && !fifo_empty) begin
                 fifo_pop();
+                term_pop_ack <= 1'b1;
             end
 
         end
@@ -275,15 +280,13 @@ module fpga_terminal_icb (
     wire bar_active = (state == S_INIT);
 
     // character source: FIFO (UART or SW)
-    wire char_avail = !fifo_empty;
+    wire char_avail = !fifo_empty && !term_pop_req;
     wire [7:0] char_data = fifo_rdata;
     reg  consume_char;
-    reg  term_pop_req;
 
     always @(posedge pclk) begin
         write_en <= 1'b0;
         consume_char <= 1'b0;
-        term_pop_req <= 1'b0;
 
         if (reset) begin
             state <= S_INIT;
@@ -397,9 +400,10 @@ module fpga_terminal_icb (
                 default: state <= S_INIT;
             endcase
 
-            // consume after state logic: raise pop request
             if (consume_char)
                 term_pop_req <= 1'b1;
+            else if (term_pop_ack)
+                term_pop_req <= 1'b0;
         end
     end
 
