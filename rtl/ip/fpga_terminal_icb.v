@@ -270,6 +270,13 @@ module fpga_terminal_icb (
     reg        write_en;
     reg [2:0]  state;
     localparam S_INIT = 0, S_SHOW_INFO = 1, S_WAIT_READ = 2, S_CLEAR_ALL = 3, S_PROMPT = 4, S_IDLE = 5;
+`ifdef SIM_FAST
+    localparam integer INIT_DELAY = 50_000;     // ~2.8ms @18MHz
+    localparam integer WAIT_DELAY = 50_000;
+`else
+    localparam integer INIT_DELAY = 135_000_000; // ~7.5s @18MHz
+    localparam integer WAIT_DELAY = 135_000_000;
+`endif
     reg [11:0] process_cnt;
     reg [27:0] timer_cnt;
 
@@ -307,7 +314,7 @@ module fpga_terminal_icb (
 
             case(state)
                 S_INIT: begin
-                    if (timer_cnt < 28'd135_000_000) timer_cnt <= timer_cnt + 1'b1;
+                    if (timer_cnt < INIT_DELAY) timer_cnt <= timer_cnt + 1'b1;
                     else begin
                         state <= S_SHOW_INFO;
                         process_cnt <= 0;
@@ -331,7 +338,7 @@ module fpga_terminal_icb (
                     end
                 end
                 S_WAIT_READ: begin
-                    if (timer_cnt < 28'd135_000_000) timer_cnt <= timer_cnt + 1'b1;
+                    if (timer_cnt < WAIT_DELAY) timer_cnt <= timer_cnt + 1'b1;
                     else begin
                         state <= S_CLEAR_ALL;
                         process_cnt <= 0;

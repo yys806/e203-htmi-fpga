@@ -65,6 +65,8 @@
   gtkwave waveout.vcd &    # 打开波形
   ```
 - 关注信号：`pop_req/pop_ack/fifo_empty/fifo_rdata/write_en/write_addr/write_data/cursor_x/cursor_y/state`、`lcd_*`、`term_uart_rx`。
+- 截图占位（UART 帧示例，`term_uart_rx` 发送 “A”）：  
+  ![UART A frame](TODO_UART_FRAME.png)
 
 ## 运行与验证
 1. 选正确 UART COM（非 JTAG），115200 8N1。

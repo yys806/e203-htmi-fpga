@@ -1,5 +1,5 @@
 #!/bin/bash -f
-iverilog -g2005-sv -o wave.out -I ../../rtl/core ./sys_tb_top.sv ../gowin_sim_lib/gw2a/prim_sim.v \
+iverilog -g2005-sv -DSIM_FAST -o wave.out -I ../../rtl/core ./sys_tb_top.sv ../gowin_sim_lib/gw2a/prim_sim.v \
 ../../rtl/core/e203_defines.v \
 ../../rtl/ip/fpga_terminal_icb.v \
 ../../rtl/ip/uart_rx.v \
