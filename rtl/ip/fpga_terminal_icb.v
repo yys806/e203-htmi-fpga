@@ -240,6 +240,7 @@ module fpga_terminal_icb (
             if (pop_req && !fifo_empty) begin
                 fifo_pop();
                 pop_ack <= 1'b1;
+                pop_req <= 1'b0;
             end
 
         end
