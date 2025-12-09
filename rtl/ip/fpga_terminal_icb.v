@@ -121,7 +121,6 @@ module fpga_terminal_icb (
     reg  [7:0] csr_char_in_data;
     reg  csr_rx_pop_pulse;
     reg  term_pop_req;
-    reg  term_pop_ack;
 
     always @(posedge pclk or posedge reset) begin
         if (reset) begin
@@ -138,7 +137,6 @@ module fpga_terminal_icb (
             csr_char_in_pulse <= 1'b0;
             csr_char_in_data  <= 8'd0;
             csr_rx_pop_pulse  <= 1'b0;
-            term_pop_ack    <= 1'b0;
             irq_pending     <= 1'b0;
             rx_wptr         <= 2'd0;
             rx_rptr         <= 2'd0;
@@ -151,7 +149,6 @@ module fpga_terminal_icb (
             csr_char_in_pulse <= 1'b0;
             csr_rx_pop_pulse  <= 1'b0;
             clear_request     <= 1'b0;
-            term_pop_ack      <= 1'b0;
 
             // hardware RX
             if (hw_rx_valid) begin
@@ -238,7 +235,7 @@ module fpga_terminal_icb (
             // terminal consumer pop
             if (term_pop_req && !fifo_empty) begin
                 fifo_pop();
-                term_pop_ack <= 1'b1;
+                term_pop_req <= 1'b0;
             end
 
         end
@@ -402,8 +399,6 @@ module fpga_terminal_icb (
 
             if (consume_char)
                 term_pop_req <= 1'b1;
-            else if (term_pop_ack)
-                term_pop_req <= 1'b0;
         end
     end
 
