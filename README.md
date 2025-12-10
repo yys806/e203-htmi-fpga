@@ -98,3 +98,14 @@
 - 原理图：`Tang_Primer_20K_SOM-3961_Schematic.pdf`、`Tang_Primer_20K_Dock-3713_Schematics.pdf`。
 - 官方例程：https://github.com/sipeed/TangPrimer-20K-example
 - 课程提供的 E203 参考代码与 ICB 文档。
+
+## 演示与运行照片
+- 演示视频：`https://pan.baidu.com/s/1yF1l8_YlUiyY_49Oy-yVkg?pwd=dwu7`（提取码：`dwu7`）。
+- 运行照片（`img/`）：
+  - ![彩条](img/彩条.jpg)
+  上电彩条自检。
+  - ![信息打印](img/信息打印.jpg)
+  信息打印阶段。
+  - ![终端演示1](img/终端演示1.jpg)
+    ![终端演示2](img/终端演示2.jpg)
+    UART 终端交互演示。
