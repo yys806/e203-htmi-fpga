@@ -1,113 +1,174 @@
-﻿# 项目报告：基于 RISC-V E203 的字符终端（HDMI + UART）
+﻿# 基于 RISC-V E203 的字符终端（HDMI + UART）——项目报告
 
 ## 摘要（中文）
-本项目在蜂鸟 E203 的 ICB 总线上挂接自定义字符终端外设，实现 640×480@60Hz HDMI/LCD 显示，上电 5 秒彩条自检后进入文本模式。通过板载 USB-JTAG 的 UART（115200 8N1，3.3V）接收 ASCII 数据并显示，支持提示符、回车换行、退格删除、自动换行，满足课程基本要求并覆盖扩展任务 3 的核心行为。核心模块包括 UART 接收、字符 FIFO、VRAM 文本帧缓冲、8×16 字库、显示时序、ICB 寄存器映射与中断。报告给出接口、实现细节、仿真要点、硬件测试流程与设计权衡。
+本项目在蜂鸟 E203 的 ICB 总线上挂接自定义字符终端外设，输出 640×480@60Hz 彩条与黑白字符，并通过板载 USB-JTAG 的 UART（115200 8N1，3.3V）接收 ASCII 数据。终端硬件完成彩条自检、提示信息显示，软件（main.c）在复位后输出提示并实现 UART 回显。报告给出接口描述、核心模块实现、仿真/硬件验证方法，并附关键代码段。
 
 ## Abstract (English)
-This project adds a custom terminal peripheral on the E203 ICB bus to drive HDMI/LCD at 640×480@60Hz. A 5-second color bar splash is shown on power-up, then a text mode with a prompt. ASCII characters are received via the on-board USB-JTAG UART (115200 8N1, 3.3V) and rendered as monochrome text. The design supports CR/LF, backspace, auto-wrap, and prompt output, meeting course requirements and covering the key behavior of extension task 3. Core blocks include UART RX, a small character FIFO, a VRAM text buffer, an 8×16 font, video timing, an ICB register map, and interrupt handling. Interfaces, implementation details, simulation guidance, hardware validation, and design trade-offs are presented.
+A custom terminal peripheral is integrated on the E203 ICB bus to drive HDMI/LCD at 640×480@60Hz, showing a splash color bar and monochrome text. UART via on-board USB-JTAG (115200 8N1) receives ASCII characters. Hardware handles splash and prompt display; software (main.c) prints a prompt and echoes UART input. Interfaces, core implementation, verification, and key code snippets are presented.
 
 ## 关键词 / Keywords
 RISC-V；E203；ICB；HDMI/LCD；UART；字符终端；640×480@60Hz；Tang Primer 20K；Gowin GW2A-18
 
 ## 1 引言
-蜂鸟 E203 参考工程提供 ICB 总线与基础外设。为满足大作业“字符终端”要求，本设计在 ICB 槽 o5 上挂接自定义外设，利用 Tang Primer 20K + Dock 的 HDMI/LCD 与板载 USB-JTAG UART 资源，实现彩条自检、640×480 字符显示和串口输入显示，并完成扩展任务 3 的终端式行为（提示符、自动换行、退格）。
+依托蜂鸟 E203 与 Tang Primer 20K + Dock，本设计在 ICB 槽 o5 挂接“字符终端”外设，完成彩条自检、640×480 文本显示与 UART 输入回显，满足大作业基本要求并实现软硬件结合（硬件自检 + 软件提示与回显）。
 
-## 2 系统概述
-- 处理器与总线：E203，终端外设挂在 ICB o5（默认基址 0x1001_4000）。
-- 显示：640×480@60Hz，像素时钟约 18 MHz，彩条 5 秒后进入文本模式。
-- 文本缓冲：VRAM 100×30 单色字符（3000 Byte），8×16 字库渲染，光标闪烁。
-- 输入：板载 USB-JTAG UART（115200 8N1）复用 gpio_in[16] (T13)。
-- 资源：GW2A-18，内部 SRAM 约 100KB，设计保持低占用与可收敛时序。
+## 2 接口描述
+- 总线：ICB，默认基址 0x1001_4000（槽 o5）。
+- 寄存器偏移：ID(0x000)、STATUS(0x004)、RXPOP(0x008)、CTRL(0x00C)、CURSOR(0x010)、VADDR/VWDATA/VRDATA(0x014/0x018/0x01C)、CHARIN(0x020)、IRQSTS(0x024)。
+- UART：`term_uart_rx` 复用 GPIO16 (T13)，115200 8N1，3.3V。
+- 显示：RGB565，`lcd_*`，640×480@60Hz；`bar_active` 指示彩条阶段。
+- 管脚：见 `gowin_prj/e203_basic_chip.cst`（`lcd_r[2]` 迁移至可用管脚，UART RX 用 T13）。
 
-## 3 接口描述
-### 3.1 ICB 寄存器（默认基址 0x1001_4000）
-- 0x000 ID (R)：0x46505431。
-- 0x004 STATUS (R)：`[15:8] fifo_data`，`[0] fifo_valid`，`[16] bar_active`，`[23] ctrl_irq_en`。
-- 0x008 RXPOP (R)：弹出 FIFO 顶元素（空则 0）。
-- 0x00C CTRL (R/W)：`[1] auto_inc`，`[2] irq_en`，`[0] clear=1` 触发清屏。
-- 0x010 CURSOR (R/W)：`cursor_y[12:8], cursor_x[6:0]`。
-- 0x014 VADDR (R/W)：VRAM 地址 0~2999。
-- 0x018 VWDATA (W)：写 VRAM 字符，auto_inc 可自增。
-- 0x01C VRDATA (R)：读 VRAM 字符。
-- 0x020 CHARIN (W)：软件注入字符到 RX FIFO。
-- 0x024 IRQSTS (R/W1C)：bit0 irq_pending，写 1 清除。
+## 3 核心模块
+- `fpga_terminal_icb.v`：ICB 外设包装，UART RX、FIFO、终端状态机，彩条→信息→清屏/提示符，字符写 VRAM，光标管理。
+- `uart_rx.v`：115200 8N1 接收，过采样计数。
+- `video_ram.v` + `text_display.v` + `font_rom.v`：字符 RAM、多读口、8×16 点阵渲染。
+- `lcd_driver.v`：640×480 时序生成，输出 `(x,y)` 与同步信号。
+- `main.c`（软件）：复位后短延时，打印 “SW echo ready\r\n”，轮询 RXPOP，写 CHARIN 回显。
 
-### 3.2 其他接口
-- 中断：`io_interrupts_0_0`，FIFO 非空且 irq_en=1 置位。
-- 时钟/复位：`clk`（外设/系统时钟，内部生成 pclk≈18 MHz），`rst_n` 低有效。
-- UART：`term_uart_rx` 复用 gpio_in[16] (T13)，115200 8N1，3.3V。
-- 显示（RGB565）：`lcd_dclk, lcd_hs, lcd_vs, lcd_de, lcd_bl, lcd_r[4:0], lcd_g[5:0], lcd_b[4:0]`。
-- 管脚：见 `gowin_prj/e203_basic_chip.cst`，`lcd_r[2]` 改到 M9，保留 GPIO in/out，UART RX 用 T13。
+## 4 关键代码（软件侧）
+- 终端寄存器定义：`firmware/hello_world/src/bsp/hbird-e200/include/headers/devices/terminal.h`
+```c
+#define TERM_REG_ID       0x000
+#define TERM_REG_STATUS   0x004
+#define TERM_REG_RXPOP    0x008
+#define TERM_REG_CTRL     0x00C
+#define TERM_REG_CURSOR   0x010
+#define TERM_REG_VADDR    0x014
+#define TERM_REG_VWDATA   0x018
+#define TERM_REG_VRDATA   0x01C
+#define TERM_REG_CHARIN   0x020
+#define TERM_REG_IRQSTS   0x024
+```
+- 平台宏：`platform.h`（终端基址复用 0x10014000，访问宏 `TERMINAL_REG`）。
+- `main.c` 核心逻辑：
+```c
+_init();
+short_delay();                    // 等待硬件彩条/信息完成
+term_print("SW echo ready\r\n");
+while (1) {                        // 轮询回显
+  uint8_t ch;
+  if (term_pop_char(&ch)) {
+    term_write_char(ch);
+  }
+}
+```
 
-## 4 核心模块的详细实现
-- `fpga_terminal_icb.v`：ICB 读写、IRQ 管理、寄存器映射；RX FIFO（4 深度）请求-确认弹出，状态机（彩条→信息行→清屏→提示符→空闲接收），支持 CR/LF、Backspace/Delete、行末自动换行，提示符长度 17。
-- `uart_rx.v`：115200 8N1，计数器过采样，双拍同步去亚稳，起始位居中采样。
-- `video_ram.v`：字符 RAM（写口 + 多读口），新增 `r_addr_6/r_data_6` 供 CSR 读。
-- `text_display.v`：坐标到点阵映射，调用 `font_rom` 8×16，叠加光标闪烁。
-- `font_rom.v`：内置 ASCII 8×16 字库。
-- `lcd_driver.v`：640×480 Timing 输出 `(x,y)` 与同步信号，像素时钟为 pclk。
+## 5 关键代码（硬件侧简述）
+- 顶层实例：`rtl/ip/fpga_terminal_icb.v`（挂在 e203_subsys_perips.o5）
+  - ICB 端口：`i_icb_cmd_valid/read/addr/wdata`、`i_icb_rsp_valid/rdata`、`io_interrupts`。
+  - UART 接收：`uart_rx u_uart(.clk(pclk), .rx_pin(term_uart_rx), .data(hw_rx_data), .valid(hw_rx_valid));`
+  - FIFO 弹出握手（单驱动，避免多重驱动）：  
+    ```verilog
+    if (pop_req && !fifo_empty) begin
+      fifo_pop();
+      pop_ack <= 1'b1;
+    end
+    ```
+  - 终端状态机（彩条→信息→清屏→提示符→空闲），写 VRAM：  
+    ```verilog
+    if (char_avail) begin
+      consume_char <= 1'b1;
+      pop_req <= 1'b1;
+      // CR/LF/BS/可打印字符处理，write_en/write_addr/write_data 更新
+    end
+    ```
+  - 彩条指示：`bar_active = (state == S_INIT);`
+- 显示管线：`lcd_driver` 生成 640×480 时序；`text_display` + `font_rom` 取字渲染，`video_ram` 双口读写字符。
 
-## 5 仿真波形（说明）
-- ICB：读 STATUS、RXPOP、写 CTRL(clear)、写 VADDR/VWDATA、读 VRDATA，验证 `rsp_valid/rsp_rdata`。
-- UART：注入 115200 帧，观察 `valid` 脉冲与 `data` 对齐。
-- FIFO 弹出：`pop_req`→`pop_ack`→`fifo_pop`，确认单次请求只弹一次。
-- 状态机：`state` INIT→SHOW_INFO→WAIT_READ→CLEAR_ALL→PROMPT→IDLE，`write_en/write_addr/write_data` 簇写信息行与清屏。
-- VRAM：写入与显示读口 `r_addr_0/r_data_0` 一致，字符位置正确。
-- 仿真过程截图：  
-  - ![bash](img/1-1.png)
-  执行 `bash sim_run_sys_tb.sh`  
-  - ![vvp](img/1-2.png)
-  执行 `vvp wave.out` 生成 VCD  
-  - ![gtkwave](img/1-3.png)
-  运行 `gtkwave waveout.vcd`  
-  - ![structure](img/1-4.png)
-  GTKWave 层级展开示例  
-- 仿真波形截图与说明：  
-  1) UART 帧示例，`term_uart_rx` 发送 “A”：起始位=0，8 数据位 LSB→MSB（0x41），停止位=1，位宽≈8.68µs（115200bps）。  
-     ![UART A frame](img/1.png)  
-  2) 显示时序：`lcd_dclk` 方波；`lcd_hs` 低脉冲（行同步，周期≈31.7µs）；`lcd_de` 低有效，长低脉冲对应行内有效区；当前窗口 `lcd_vs` 高电平（帧同步低脉冲周期≈16.7ms，未落入本窗口）。  
-     ![LCD timing](img/2.png)  
-  3) 彩条→文本切换：`bar_active` 从 1→0，显示管线时序（`lcd_hs/de/dclk`）保持正常，表明已进入文本模式。  
-     ![Bar to text](img/3.png)
+### 硬件关键代码片段（节选）
+- `rtl/ip/fpga_terminal_icb.v`：UART/FIFO/ICB 与状态机
+```verilog
+// UART 接收与 FIFO
+uart_rx u_uart (
+  .clk   (pclk),
+  .rx_pin(term_uart_rx),
+  .data  (hw_rx_data),
+  .valid (hw_rx_valid)
+);
 
-## 6 硬件测试方法和流程
-1) 软件：进入 `firmware/hello_world`（或自定义应用）`make clean && make` 生成 `ram.hex`。
-2) 工程：确保 `ram.hex` 已用于 ROM 初始化。
-3) 综合/P&R：器件 `GW2A-18`，检查管脚；Dual-Purpose Pin 保持 JTAG/MSPI 默认，SSPI 未用可关。
-4) 生成 bit/FS：Gowin IDE 导出。
-5) 烧录：USB-JTAG 连接，Gowin Programmer/openFPGALoader 下载。
-6) 运行验证：
-   - 串口：选择 UART COM（非 JTAG COM），115200 8N1。
-   - 现象：彩条→两行信息→清屏→提示符。
-   - 功能：输入字符、换行、退格；读 STATUS/IRQSTS 验证 FIFO 非空与中断清除。
+// pop_ack 只在此处驱动，避免多重驱动
+always @(posedge pclk or posedge reset) begin
+  ...
+  if (pop_req && !fifo_empty) begin
+    fifo_pop();
+    pop_ack <= 1'b1;
+  end
+  ...
+end
 
-## 7 关键模块说明与设计权衡
-- 终端状态机：计时 5s 彩条，批量写信息行，再清屏与提示符，空闲轮询 FIFO 写 VRAM。
-- 弹出握手：`pop_req` 仅 FSM 驱动，寄存器侧检测后弹出并 `pop_ack`，FSM 见到确认清零，解决多倍/两倍显示。
-- 光标/行宽：100×30，行末回行；CR/LF 统一换行；Backspace 不越过提示符；满屏循环回顶。
-- 资源：3000B VRAM + 字库 ROM，像素时钟降到 ~18 MHz 便于时序收敛，满足 GW2A-18 SRAM 预算。
-- 中断：FIFO 非空触发，写 IRQSTS 清除；支持轮询或中断驱动。
+// 终端状态机（彩条->信息->清屏->提示符->空闲）
+always @(posedge pclk) begin
+  write_en <= 1'b0;
+  consume_char <= 1'b0;
+  if (reset) begin
+    state <= S_INIT;
+    ...
+  end else begin
+    case(state)
+      S_INIT:     if (timer_cnt < INIT_DELAY) timer_cnt <= timer_cnt + 1'b1; else state <= S_SHOW_INFO;
+      S_SHOW_INFO: ... // 写项目信息
+      S_WAIT_READ: ...
+      S_CLEAR_ALL: ...
+      S_PROMPT:   ... // 写提示符
+      S_IDLE: begin
+        if (char_avail) begin
+          consume_char <= 1'b1;
+          pop_req <= 1'b1;
+          // CR/LF/BS/可打印字符处理，更新 cursor/write_en/write_addr/write_data
+        end
+      end
+      default: state <= S_INIT;
+    endcase
+  end
+end
 
-## 8 扩展任务 3（Linux 终端模拟）原理
-- 已实现：提示符、逐字回显、CR/LF 换行、Backspace 删除、行满回行、循环滚动、终端样式显示。
-- 原理：UART/FIFO 缓冲 → 终端 FSM 消费并写 VRAM → 字库渲染 → HDMI/LCD 显示。光标与提示符保证交互类似简化终端；未实现 ANSI 复杂控制码，若扩展可加入滚屏缓冲与 ESC 解析。
+assign bar_active = (state == S_INIT);
+```
 
-## 9 结论
-设计在 E203 ICB 上完成字符终端挂接，实现 640×480 显示、彩条自检、UART 输入与终端式交互，满足基本要求并覆盖扩展任务 3 的核心行为。通过精简 FIFO/VRAM/字库与降低像素时钟，保证 GW2A-18 上的时序与布线可收敛。后续可在资源允许的情况下加入 ANSI 控制码与更高分辨率。
+- `rtl/ip/uart_rx.v`：115200 8N1 解码
+```verilog
+localparam CNT_MAX = 156.25; // 27/50MHz -> 115200bps
+always @(posedge clk) begin
+  valid <= 0;
+  case(state)
+    0: if (rx_d2 == 0) begin state <= 1; cnt <= CNT_MAX/2; end
+    1: if (cnt==0) begin cnt<=CNT_MAX; state<=2; bit_idx<=0; end else cnt<=cnt-1;
+    2: if (cnt==0) begin cnt<=CNT_MAX; data[bit_idx]<=rx_d2; if(bit_idx==7) state<=3; else bit_idx++; end else cnt<=cnt-1;
+    3: if (cnt==0) begin valid<=1; state<=0; end else cnt<=cnt-1;
+  endcase
+end
+```
 
-## 10 参考文献
-1. `ref/` 目录资料与 Tang Primer 20K 示例项目。
-2. Tang Primer 20K 原理图：`Tang_Primer_20K_SOM-3961_Schematic.pdf`、`Tang_Primer_20K_Dock-3713_Schematics.pdf`。
-3. Sipeed 官方示例：https://github.com/sipeed/TangPrimer-20K-example
-4. 课程提供的 E203 参考代码与 ICB 总线文档。
+- `rtl/ip/video_ram.v`：字符 RAM 多读口（只摘显示与 CSR 读）
+```verilog
+always @(posedge clk) begin
+  if (w_en) mem[w_addr] <= w_data;
+  r_data_0 <= mem[r_addr_0];    // 显示读口
+  r_data_6 <= mem[r_addr_6];    // CSR 读口
+end
+```
 
-## 演示与运行照片
+- `rtl/ip/text_display.v`：字库取字、光标闪烁
+```verilog
+// 字符到点阵：ascii_code -> font_rom -> pixel_on
+assign char_addr = {ascii_code, pixel_y[3:0]};
+assign pixel_on  = font_data[3'd7 - pixel_x[2:0]] | cursor_overlay;
+```
+
+## 5 验证方法
+- 硬件：USB-JTAG 供电/下载/UART；上电观察彩条→信息→软件提示；串口 115200 8N1 输入字符，屏幕回显。
+- 仿真：Icarus + GTKWave，关注 `i_icb_cmd_valid/read/addr/wdata`、`write_en/write_addr/write_data/cursor_x/cursor_y`、`term_uart_rx`、`bar_active` 等信号。
+
+## 6 运行与文件
+- 固件构建：Linux/WSL 进入 `firmware/hello_world` 执行 `make clean && make`，生成 `Debug/ram.hex`，并覆盖仿真/工程使用的 hex。
+- FPGA：Gowin 工程引用最新 hex，综合/P&R，USB-JTAG 烧录。
+
+## 7 仿真、演示与照片
+- 仿真过程截图：`img/1-1.png`～`1-4.png`（脚本执行、GTKWAVE 层级）。
+- 波形截图：`img/1.png`（UART 帧）、`img/2.png`（显示时序）、`img/3.png`（彩条→文本）。
 - 演示视频：`https://pan.baidu.com/s/1yF1l8_YlUiyY_49Oy-yVkg?pwd=dwu7`（提取码：`dwu7`）。
-- 运行照片（`img/`）：
-  - ![彩条](img/彩条.jpg)
-  上电彩条自检。
-  - ![信息打印](img/信息打印.jpg)
-  信息打印阶段。
-  - ![终端演示1](img/终端演示1.jpg)
-    ![终端演示2](img/终端演示2.jpg)
-    UART 终端交互演示。
+- 运行照片：`img/彩条.jpg`、`img/信息打印.jpg`、`img/终端演示1.jpg`、`img/终端演示2.jpg`。
+
+## 8 结论
+硬件端完成彩条/信息显示与终端显示管线；软件端通过 ICB 寄存器输出提示并回显 UART 输入，实现软硬件结合。最新固件需在 Linux/WSL 编译，确保 hex 与仿真/工程同步，即可在仿真与上板观察终端功能。
