@@ -8,7 +8,7 @@
 - UART 输入（板载 USB-JTAG 的 UART 口，无需飞线），CR/LF 换行、Backspace/Delete、行末自动换行。
 - ICB 寄存器读写 VRAM、清屏、FIFO 读、软件注入字符与中断。
 
-## 目录结
+## 目录结构
 - `rtl/ip/fpga_terminal_icb.v`：终端顶层，ICB 外设封装、UART RX、字符状态机、光标/清屏逻辑。
 - `rtl/ip/text_display.v`：字符到点阵渲染。
 - `rtl/ip/font_rom.v`：内置 8×16 ASCII 字库。
