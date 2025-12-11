@@ -19,6 +19,7 @@
 #include "headers/devices/uart.h"
 #include "headers/devices/i2c.h"
 #include "headers/devices/my_periph.h"
+#include "headers/devices/terminal.h"
 
 /****************************************************************************
  * Platform definitions
@@ -42,6 +43,7 @@
 #define MEM_CTRL_ADDR           _AC(0x80000000,UL)
 
 #define MY_PERIPH_CTRL_ADDR     _AC(0x10014000,UL)  
+#define TERMINAL_CTRL_ADDR      _AC(0x10014000,UL)  // slot o5，终端 IP 复用此地址
 
 
 // IOF Mappings
@@ -122,6 +124,7 @@
 #define I2C_REG(offset)         _REG8(I2C_CTRL_ADDR, offset)
 
 #define MY_PERIPH_REG(offset)   _REG32(MY_PERIPH_CTRL_ADDR, offset)
+#define TERMINAL_REG(offset)    _REG32(TERMINAL_CTRL_ADDR, offset)
 
 // Misc
 
