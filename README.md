@@ -25,7 +25,7 @@
 - 显示（RGB565）：`lcd_dclk R9`, `lcd_hs A15`, `lcd_vs D14`, `lcd_de E15`, `lcd_r[4:0] L9 N8 M9 N7 N6`, `lcd_g[5:0] D11 A11 B11 P7 R7 D10`, `lcd_b[4:0] B12 C12 B13 A14 B14`。
 
 ## 时钟与显示
-- 输入基准：27 MHz；内部生成像素时钟约 18 MHz 用于 640×480@60Hz。
+- 输入基准：27 MHz；内部生成像素时钟约 18 MHz 用于 800×480@60Hz。
 - 彩条时间：约 5 秒。
 - PLL 设备型号：设为 GW2A-18，避免错误警告。
 
@@ -100,7 +100,20 @@
 - 课程提供的 E203 参考代码与 ICB 文档。
 
 ## 演示与运行照片
-- 演示视频：`https://pan.baidu.com/s/1yF1l8_YlUiyY_49Oy-yVkg?pwd=dwu7`（提取码：`dwu7`）。
+- 演示视频：https://pan.baidu.com/s/1yF1l8_YlUiyY_49Oy-yVkg?pwd=dwu7。
+
+- 显示流水线：
+![显示流水线](img/显示流水线.png)
+
+- 系统架构图
+![系统整体架构图](img/架构图.png)
+
+- 状态机流程图
+![状态机流程图](img/状态机流程图.png)
+
+- 软件流程图
+![软件流程图](img/软件流程图.png)
+
 - 运行照片（`img/`）：
   - ![彩条](img/彩条.jpg)
   上电彩条自检。

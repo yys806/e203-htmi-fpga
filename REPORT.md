@@ -22,13 +22,21 @@ RISC-V；E203；ICB；HDMI/LCD；UART；字符终端；640×480@60Hz；Tang Prim
 ## 二、开发过程
 ### 2.1 需求拆解与方案论证
 根据 ref/芯片大作业中文版要求.md 的评分点，团队将需求拆解为“接口正确性、显示质量、交互完整性、验证充分性”四类。接口方面，ICB 寄存器需覆盖 ID/状态/光标/VRAM 读写/中断；显示方面需保证 640×480@60Hz 时序、彩条检验、100×30 字符映射；交互方面要支持 UART 输入及软件注入，且行为符合常见终端习惯；验证方面需给出仿真和上板的可重复步骤。参考 ref/e02_understand_example_soc.md 的外设模板和 ref/ichip2024_Design_of_HDMI_display_module_for_RISC-V.pdf 的显示案例，最终确定“ICB 包装 + UART/FIFO + 状态机 + 字符显示管线”的分层方案。
+
+显示流水线图：
+![e94ef06b116ceb17fcb0e6398acd5e25.png](https://work-1321607658.cos.ap-guangzhou.myqcloud.com/e94ef06b116ceb17fcb0e6398acd5e25.png)
 ### 2.2 总体架构
 硬件总体框架由四个部分组成：
 1. ICB 接口与寄存器阵列：位于 fpga_terminal_icb.v，负责解码 ICB 访问、驱动 STATUS/CTRL/CURSOR/VADDR/VWDATA/VRDATA/CHARIN/IRQSTS；同时产生 io_interrupts。
 2. 输入子系统：uart_rx.v 完成 115200 8N1 解码，输出 8bit 数据和 valid 信号；上层 FIFO 缓冲接收到的字符，支持 ICB RXPOP 和状态位查询。
 3. 字符状态机与 VRAM：状态机负责彩条→项目信息→清屏→提示符→空闲处理；字符写入通过 video_ram.v 完成，VRAM 容量 3000 字节，支持显示读口和 CSR 读口，配合光标自增/手动定位。
 4. 显示管线：lcd_driver.v 生成 640×480@60Hz 时序和 (x,y) 坐标；text_display.v 将坐标映射到字符位置并从 font_rom.v 取 8×16 点阵；RGB565 输出至屏幕。彩条阶段通过状态机控制 bar_active，在 text_display 层切换输出源。
+
 软件侧在 firmware/hello_world/src 下完成：terminal.h 定义寄存器偏移，platform.h 将终端基址映射到 0x1001_4000，main.c 初始化后通过 term_print 输出软件提示，再以轮询方式实现 UART 回显。软件与硬件共同承担交互体验：硬件负责彩条和开机信息，软件负责提示符后的人机交互。
+
+系统整体架构：
+![47ffc55a92b19e079cf61c4edee3fd11.png](https://work-1321607658.cos.ap-guangzhou.myqcloud.com/47ffc55a92b19e079cf61c4edee3fd11.png)
+
 ### 2.3 ICB 接口与寄存器设计
 寄存器偏移严格与 README.md 保持一致，方便查阅与调试：
 - 0x000 ID (R)：固定返回 0x46505431，用于外设识别。
@@ -53,6 +61,9 @@ UART 输入经 uart_rx.v 处理，采用过采样计数（27/50MHz -> 115200bps�
 4. S_PROMPT：写入提示符 root@shen_kai:# ，将光标置于下一列。
 5. S_IDLE：进入正常交互，若 FIFO 有数据则弹出，根据字符类型执行 CR/LF/退格/可打印写入，超行自动换行，满屏时回卷。
 
+状态机流程图：
+![29215e842249e2855650370b9faab371.png](https://work-1321607658.cos.ap-guangzhou.myqcloud.com/29215e842249e2855650370b9faab371.png)
+
 该流程兼顾“硬件自举 + 软件交互”两种体验，且与 ref/openocd_howto.md 中的串口调试建议一致：开机即显示提示，便于确认波特率和连线。
 ### 2.6 软件设计与接口调用
 firmware/hello_world 中的 terminal.h 提供寄存器偏移，platform.h 将基址映射到 0x10014000。main.c 的核心逻辑为：
@@ -62,6 +73,10 @@ firmware/hello_world 中的 terminal.h 提供寄存器偏移，platform.h 将基
 4. 主循环中调用 term_pop_char(&ch) 轮询 RXPOP，当有数据时用 term_write_char(ch) 写入 CHARIN，实现回显。  
 
 软件还保留了对 CTRL 的清屏操作、CURSOR 的手动定位，便于后续扩展（如显示菜单或图形）。由于终端本身能在硬件侧完成退格/换行逻辑，软件只需简单回显即可。
+
+软件运行流程：
+![e0b0d1a296cf98eab4cf2ac22c6935cd.png](https://work-1321607658.cos.ap-guangzhou.myqcloud.com/e0b0d1a296cf98eab4cf2ac22c6935cd.png)
+
 ### 2.7 仿真方案
 仿真目录 sim/iverilog-lnx 提供脚本 sim_run_sys_tb.sh，在 sys_tb_top.sv 中通过 gpio_in[16] 发送 UART 样例（默认 "ABC\r\n"）。仿真关注的信号包括：
 - ICB 命令/响应：i_icb_cmd_valid/read/addr/wdata、i_icb_rsp_valid/rdata，确认寄存器解码与握手正确；
