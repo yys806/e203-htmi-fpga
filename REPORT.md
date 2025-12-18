@@ -1,4 +1,4 @@
-# 基于RISC-V&E203字符终端(HDMI+UART）项目报告
+
 
 <center>2352396 禹尧珅 & 2351283 吴凯</center>
 
@@ -62,7 +62,8 @@ UART 输入经 uart_rx.v 处理，采用过采样计数（27/50MHz -> 115200bps�
 5. S_IDLE：进入正常交互，若 FIFO 有数据则弹出，根据字符类型执行 CR/LF/退格/可打印写入，超行自动换行，满屏时回卷。
 
 状态机流程图：
-![29215e842249e2855650370b9faab371.png](https://work-1321607658.cos.ap-guangzhou.myqcloud.com/29215e842249e2855650370b9faab371.png)
+![状态机流程图.png](https://work-1321607658.cos.ap-guangzhou.myqcloud.com/%E7%8A%B6%E6%80%81%E6%9C%BA%E6%B5%81%E7%A8%8B%E5%9B%BE.png)
+
 
 该流程兼顾“硬件自举 + 软件交互”两种体验，且与 ref/openocd_howto.md 中的串口调试建议一致：开机即显示提示，便于确认波特率和连线。
 ### 2.6 软件设计与接口调用
